@@ -1,0 +1,25 @@
+{% extends "main.html" %}
+{% block content %}
+
+<article class="center">
+    <h1>Welcome to Atlanta Zoo </h1>
+    {% if current_user.is_authenticated %}
+        <p>Hello {{current_user.username}} you are logged in</p>
+        <a href="{{url_for('logout')}}">Log Out</a>
+    {% else %}
+        <a href="{{url_for('sign_up')}}">Sign Up &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</a>
+        <a href="{{url_for('login')}}">Login</a> 
+    {% endif %}
+    <br>
+    <img src="https://zooatlanta.org/wp-content/uploads/2016/11/frontgate_headon_9666-e1482260209468.png" alt="Zoo" style="width:500px;height:600px;">
+    <p style="font-size:300%;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Team member:</p>
+    <p>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Hanying Pan</p>
+    <p>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Robin Luo</p>
+    <p>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Tong Lu</p>
+    <p>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Zhongyi Li</p>
+    <p>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;Yiheng Qi</p>
+    <br>
+
+    
+</article>
+{% endblock content %}
