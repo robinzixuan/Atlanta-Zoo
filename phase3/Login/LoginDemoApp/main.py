@@ -22,48 +22,42 @@ def sign_up():
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
         cur = db.get_db().cursor()
-        try:
-            cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
+        cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
+        rv = cur.fetchone()
+        if rv is None:
+            cur.execute('SELECT * FROM User WHERE Username = "%s"' % username)
             rv = cur.fetchone()
             if rv is None:
-                cur.execute('SELECT * FROM User WHERE Username = "%s"' % username)
-                rv = cur.fetchone()
-                if rv is None:
-                    cur.execute('INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)', (username, email, password))
-                    cur.execute('INSERT INTO Visitor VALUES (%s)', username)
-                    flash('Sign up successful')
-                    return redirect(url_for('home'))
-                else:
-                    raise ValueError("The Username already exist")
+                cur.execute('INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)',
+                            (username, email, password))
+                cur.execute('INSERT INTO Visitor VALUES (%s)', username)
+                flash('Sign up successful')
+                return redirect(url_for('home'))
             else:
-                raise ValueError("The Email already exist")
-        except Exception as e:
-             # raise ValueError("The Value is not right")
-             raise e
+                flash('The Username already exist')
+        else:
+            flash('The Email already exist')
     if staff_form.submit2.data and staff_form.validate_on_submit():
         username = visitor_form.username.data.lower()
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
 
         cur = db.get_db().cursor()
-        try:
-            cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
+
+        cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
+        rv = cur.fetchone()
+        if rv is None:
+            cur.execute('SELECT * FROM User WHERE Username = "%s"' % username)
             rv = cur.fetchone()
             if rv is None:
-                cur.execute('SELECT * FROM User WHERE Username = "%s"' % username)
-                rv = cur.fetchone()
-                if rv is None:
-                    cur.execute('INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)', (username, email, password))
-                    cur.execute('INSERT INTO Staff VALUES (%s)', username)
-                    flash('Sign up successful')
-                    return redirect(url_for('home'))
-                else:
-                    raise ValueError("The Username already exist")
+                cur.execute('INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)', (username, email, password))
+                cur.execute('INSERT INTO Staff VALUES (%s)', username)
+                flash('Sign up successful')
+                return redirect(url_for('home'))
             else:
-                raise ValueError("The Email already exist")
-        except Exception as e:
-            # raise ValueError("The Value is not right")
-            raise e
+                flash('The Username already exist')
+        else:
+            flash('The Email already exist')
     return render_template('sign_up.html', form=visitor_form)
 
 
@@ -126,15 +120,62 @@ def logout():
     # Log out user and redirect to home page
     logout_user()
     return redirect(url_for('home'))
+#
+# @login_required
+# @app.route("/animal_detail")
+# def animal_detail():
+#     return render_template("animal_detail.html")
+#
+# @login_required
+# @app.route("/exhibit_detail")
+# def exhibit_detail():
+#     return render_template("exhibit_detail.html")
+#
+# @login_required
+# @app.route("/")
+# def ():
+#     return render_template()
+#
+#
+#
+# ### visitor stuff
+# @app.route("/visitor", methods=['GET', 'POST'])
+# @login_required
+# def visitormain():
+#     # print(type(current_user), dir(current_user))
+#     return render_template('visitormain.html')
+#
+# @app.route("/visitor_search_exhibit", methods=['GET', 'POST'])
+# @login_required
+# def visitor_search_exhibit():
+#     return render_template("visitor_search_exhibit.html")
+#
+# @login_required
+# @app.route("/visitor_search_animal")
+# def visitor_search_animal():
+#     return render_template("visitor_search_animal.html")
+#
+# @login_required
+# @app.route("/visitor_search_show")
+# def visitor_search_show():
+#     return render_template("visitor_search_show.html")
+#
+# @login_required
+# @app.route("/visitor_exhibit_history")
+# def visitor_exhibit_history():
+#     return render_template("visitor_exhibit_history.html")
+#
+# @login_required
+# @app.route("/visitor_show_history")
+# def visitor_show_history():
+#     return render_template("visitor_show_history.html")
+#
+#
+#
+#
+#
 
-
-@app.route("/visitormain", methods=['GET', 'POST'])
-@login_required
-def visitormain():
-    # print(type(current_user), dir(current_user))
-    return render_template('visitormain.html')
-
-
+### staff stuff
 @app.route("/staff", methods=['GET', 'POST'])
 @login_required
 def staff():
@@ -144,9 +185,13 @@ def staff():
 @app.route("/staff_view_shows", methods=['GET', 'POST'])
 @login_required
 def staff_view_shows():
-    return render_template('show.html')
-
-@app.route("/staff_search_animal", methods=['GET', 'POST'])
-@login_required
-def staff_search_animal():
-    return render_template('show.html')
+    cur = db.get_db().cursor()
+    cur.execute('SELECT * FROM Shows WHERE Hostby = %s', current_user.username)
+    fetch = cur.fetchall()
+    name, date, exhibit, _ = fetch
+    return render_template('staff_view_shows.html', name=name, time=date, exhibit=exhibit)
+#
+# @app.route("/staff_search_animal", methods=['GET', 'POST'])
+# @login_required
+# def staff_search_animal():
+#     return render_template('show.html')

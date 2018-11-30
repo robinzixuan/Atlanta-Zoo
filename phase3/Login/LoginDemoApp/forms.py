@@ -28,3 +28,7 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
+# class StaffShowsForm(FlaskForm):
+# #     name = StringField('Name')
+# #     time = StringField('time')
+# #     exhibit = StringField('exhibit')
