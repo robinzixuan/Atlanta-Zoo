@@ -23,7 +23,7 @@ def sign_up():
         password = form.password.data
 
         # Hash password
-        password = bcrypt.generate_password_hash(password)
+        # password = bcrypt.generate_password_hash(password)
         # Store user inputs in database
         cur = db.get_db().cursor()
         try:
@@ -33,8 +33,10 @@ def sign_up():
                 cur.execute('SELECT * FROM User WHERE Username = "%s"' % username)
                 rv = cur.fetchone()
                 if rv is None:
-                    cur.execute('INSERT INTO User (Username, Email, Password) VALUES ("%s", "%s", "%s")', (username, email, password))
-                    return render_template('login.html', form=form)
+                    cur.execute('INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)', (username, email, password))
+                    # todo: visitor sign up and staff signup
+                    flash('Sign up successful')
+                    return redirect(url_for('home'))
                 else:
                     raise ValueError("The Username already exist")
             else:
@@ -58,27 +60,39 @@ def login():
         # Extract user inputs
         email = form.email.data.lower()
         password = form.password.data
+        # print(email, password)
 
         # Search for user in database
         cur = db.get_db().cursor()
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
-        u, e, p = cur.fetchone()
-        user = User(u, e, p)
+        fetch = cur.fetchone()
+        if fetch:
+            # print(fetch)
+            u, e, p = fetch
+            if p == password:
+                user = User(u, e, p)
 
-        # If user has been found, the password matches and users email has been confirmed, log user in
-        # if user and bcrypt.check_password_hash(user.password, password) :
-        if User and p == password:
-            login_user(user)
-
-            # If login is being accessed from a redirect store target page in variable called next_page
-            next_page = request.args.get('next')
-
-            # Redirect to target page or home page based on how user got to the login page
-            return redirect(next_page) if next_page else redirect(url_for('usermain'))
-
-        # Otherwise the user must have entered wrong credentials
+                # check use type
+                cur = db.get_db().cursor()
+                cur.execute('SELECT * FROM Visitor WHERE Username = "%s"' % u)
+                if cur.fetchone():
+                    user.set_type("visitor")
+                    login_user(user)
+                    return redirect(url_for('visitormain'))
+                cur.execute('SELECT * FROM Staff WHERE Username = "%s"' % u)
+                if cur.fetchone():
+                    # print("staff")
+                    user.set_type("staff")
+                    login_user(user)
+                    return redirect(url_for('staff'))
+                # print("admin")
+                user.set_type("admin")
+                login_user(user)
+                return redirect(url_for('visitormain'))
+            else:
+                flash('Wrong password. Please check your credentials')
         else:
-            flash('Login failed. Please check your credentials')
+            flash('User does not exist')
 
     # If user is not already logged in redirect to login page
     return render_template('login.html', form=form)
@@ -121,38 +135,25 @@ def confirm_email(token):
     return redirect(url_for('login'))
 
 
-# This route is accessed whenever a confirmation mail need to be send
-# Instead of an email a token of the mail is being passed to the URL, to make brute force attacks more difficult
-@app.route('/send_mail/<token>')
-def send_email(token):
+@app.route("/visitormain", methods=['GET', 'POST'])
+@login_required
+def visitormain():
+    # print(type(current_user), dir(current_user))
+    return render_template('visitormain.html')
 
-    # Extract email address from token
-    email = serializer.loads(token, salt='email', max_age=1800)
 
-    # Send confirmation mail to extracted email address
-    token = serializer.dumps(email, salt='email')
+@app.route("/staff", methods=['GET', 'POST'])
+@login_required
+def staff():
+    # print(type(current_user), dir(current_user))
+    return render_template('staff.html')
 
-    # Email head message
-    msg = Message('FlaskLoginDemo.PythonAnywhere.com -- Confirm your email', sender='your@mail.com', recipients=[email])
+@app.route("/staff_view_shows", methods=['GET', 'POST'])
+@login_required
+def staff_view_shows():
+    return render_template('show.html')
 
-    # Email body message
-    msg.body = '''Please click this link to confirm your email: %s 
-    If you did not make this request simply ignore this email.''' \
-               % url_for('confirm_email', token=token, _external=True)
-
-    # Send email
-    mail.send(msg)
-
-    # Notify user that email has been send
-    flash_msg = 'A confirmation email has been send to %s. Please follow its instructions to login. <a href="%s">' \
-                '(Resend Email)</a>' % (email, url_for('send_email', token=serializer.dumps(email, salt='email')))
-
-    flash(Markup(flash_msg))
-
-    # Redirect to login page
-    return redirect(url_for('login'))
-
-#
-@app.route("/usermain", methods=['GET', 'POST'])
-def usermain():
-    return render_template('usermain.html')
+@app.route("/staff_search_animal", methods=['GET', 'POST'])
+@login_required
+def staff_search_animal():
+    return render_template('show.html')

@@ -5,10 +5,11 @@
     <h1>Welcome to Atlanta Zoo </h1>
     {% if current_user.is_authenticated %}
         <p>Hello {{current_user.username}} you are logged in</p>
-        <a href="{{url_for('logout')}}">Log Out</a>
+        <a href="{{url_for('logout')}}"><button type="button">Log Out</button></a>
     {% else %}
-        <a href="{{url_for('sign_up')}}">Sign Up &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</a>
-        <a href="{{url_for('login')}}">Login</a> 
+        <a href="{{url_for('sign_up')}}" ><button type="button">Sign Up </button></a>
+        <p>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</p>
+        <a href="{{url_for('login')}}"> <button type="button">Login</button></a> 
     {% endif %}
     <br>
     <img src="https://zooatlanta.org/wp-content/uploads/2016/11/frontgate_headon_9666-e1482260209468.png" alt="Zoo" style="width:500px;height:600px;">

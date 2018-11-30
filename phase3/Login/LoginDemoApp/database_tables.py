@@ -12,9 +12,13 @@ class User(UserMixin):
         self.email=email
         self.username=username
         self.password=password
+        self.type = ""
 
     def get_id(self):
         return self.email
+
+    def set_type(self, t):
+        self.type = t
 
     @staticmethod
     def get(email):
@@ -23,12 +27,10 @@ class User(UserMixin):
         """
         if not email:
             return None
-        try:
-            cur = db.get_db().cursor()
-            cur.execute('SELECT * FROM User where Email= "%s"' % email)
-            rv = cur.fetchone()
+        cur = db.get_db().cursor()
+        cur.execute('SELECT * FROM User where Email= "%s"' % email)
+        rv = cur.fetchone()
+        if rv:
             username, email, password = rv
             return User(username, email, password)
-        except:
-            return None
         return None
