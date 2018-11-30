@@ -7,33 +7,24 @@ from LoginDemoApp.database_tables import load_user
 
 # Classes for wt-forms
 
-class RegistrationForm(FlaskForm):
-    # First param of input field is id and kwargs are used for input validation
-    # DataRequired just checks that the input field is not submitted empty
-    # Length() checks input length
-    # Email() check if input is an email address
-    # EqualTo() checks if input is equal to another specified input field
+class VisitorRegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=20)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(max=20)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Sign Up')
+    submit1 = SubmitField('Sign Up Visitor')
+    submit2 = SubmitField('Sign Up Staff')
 
-    # # Add custom validation (check if username and email are already stored in database)
-    # print("checking username: %s" % username)
-    # def validate_username(self, username):
-    #     users = load_user(username)
-    #     if users:
-    #         raise ValidationError('That username is taken. Please choose a different one.')
-    # #
-    # def validate_email(self, email):
-    #     users = load_user(email)
-    #     if users:
-    #         raise ValidationError('That email is taken. Please choose a different one.')
-
+class StaffRegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(max=20)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit2 = SubmitField('Sign Up Staff')
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+

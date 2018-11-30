@@ -1,6 +1,6 @@
 from LoginDemoApp import app, db, bcrypt, serializer
 from LoginDemoApp.database_tables import load_user, User
-from LoginDemoApp.forms import RegistrationForm, LoginForm
+from LoginDemoApp.forms import *
 from flask import render_template, url_for, flash, Markup, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Message
@@ -15,16 +15,12 @@ def home():
 
 @app.route("/signUp", methods=['GET', 'POST'])
 def sign_up():
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        # Extract user inputs
-        username = form.username.data.lower()
-        email = form.email.data.lower()
-        password = form.password.data
-
-        # Hash password
-        # password = bcrypt.generate_password_hash(password)
-        # Store user inputs in database
+    visitor_form = VisitorRegistrationForm()
+    staff_form = StaffRegistrationForm()
+    if visitor_form.submit1.data and visitor_form.validate_on_submit():
+        username = visitor_form.username.data.lower()
+        email = visitor_form.email.data.lower()
+        password = visitor_form.password.data
         cur = db.get_db().cursor()
         try:
             cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
@@ -34,7 +30,7 @@ def sign_up():
                 rv = cur.fetchone()
                 if rv is None:
                     cur.execute('INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)', (username, email, password))
-                    # todo: visitor sign up and staff signup
+                    cur.execute('INSERT INTO Visitor VALUES (%s)', username)
                     flash('Sign up successful')
                     return redirect(url_for('home'))
                 else:
@@ -44,7 +40,32 @@ def sign_up():
         except Exception as e:
              # raise ValueError("The Value is not right")
              raise e
-    return render_template('sign_up.html', form=form)
+    if staff_form.submit2.data and staff_form.validate_on_submit():
+        username = visitor_form.username.data.lower()
+        email = visitor_form.email.data.lower()
+        password = visitor_form.password.data
+
+        cur = db.get_db().cursor()
+        try:
+            cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
+            rv = cur.fetchone()
+            if rv is None:
+                cur.execute('SELECT * FROM User WHERE Username = "%s"' % username)
+                rv = cur.fetchone()
+                if rv is None:
+                    cur.execute('INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)', (username, email, password))
+                    cur.execute('INSERT INTO Staff VALUES (%s)', username)
+                    flash('Sign up successful')
+                    return redirect(url_for('home'))
+                else:
+                    raise ValueError("The Username already exist")
+            else:
+                raise ValueError("The Email already exist")
+        except Exception as e:
+            # raise ValueError("The Value is not right")
+            raise e
+    return render_template('sign_up.html', form=visitor_form)
+
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -105,34 +126,6 @@ def logout():
     # Log out user and redirect to home page
     logout_user()
     return redirect(url_for('home'))
-
-
-# This route can only be accessed with a valid token
-# When accessed it confirms the email the token is associated with
-@app.route('/confirm_email/<token>')
-def confirm_email(token):
-    try:
-        # Extract email address from token
-        email = serializer.loads(token, salt='email', max_age=1800)
-
-        # Update confirmed email flag to true
-        user = User.query.filter_by(email=email).first()
-        user.email_confirmed = True
-        db.session.add(user)
-        db.session.commit()
-
-        # Notify user with success message
-        flash('Your account has been created! You are now able to log in')
-
-    # If token is expired or invalid notify user
-    except (SignatureExpired, BadTimeSignature):
-        if SignatureExpired:
-            return 'Token expired'
-        elif BadTimeSignature:
-            return 'Invalid token'
-
-    # If email confirmation was successful return to login page so user can login
-    return redirect(url_for('login'))
 
 
 @app.route("/visitormain", methods=['GET', 'POST'])
