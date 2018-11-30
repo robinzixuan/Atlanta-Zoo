@@ -2,6 +2,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from LoginDemoApp.database_tables import load_user
 
 
 # Classes for wt-forms
@@ -19,14 +20,15 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     # # Add custom validation (check if username and email are already stored in database)
+    # print("checking username: %s" % username)
     # def validate_username(self, username):
-    #     user = User.query.filter_by(username=username.data).first()
-    #     if user:
+    #     users = load_user(username)
+    #     if users:
     #         raise ValidationError('That username is taken. Please choose a different one.')
-    #
+    # #
     # def validate_email(self, email):
-    #     user = User.query.filter_by(email=email.data).first()
-    #     if user:
+    #     users = load_user(email)
+    #     if users:
     #         raise ValidationError('That email is taken. Please choose a different one.')
 
 

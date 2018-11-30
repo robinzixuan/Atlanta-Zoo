@@ -1,5 +1,5 @@
-from LoginDemoApp import app, db, bcrypt, serializer, mail
-from LoginDemoApp.database_tables import load_user
+from LoginDemoApp import app, db, bcrypt, serializer
+from LoginDemoApp.database_tables import load_user, User
 from LoginDemoApp.forms import RegistrationForm, LoginForm
 from flask import render_template, url_for, flash, Markup, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
@@ -27,24 +27,21 @@ def sign_up():
         # Store user inputs in database
         cur = db.get_db().cursor()
         try:
-            cur.execute('SELECT * FROM User WHERE Email = ' + email)
+            cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
             rv = cur.fetchone()
             if rv is None:
-                cur.execute('SELECT * FROM User WHERE Username = ' + username)
+                cur.execute('SELECT * FROM User WHERE Username = "%s"' % username)
                 rv = cur.fetchone()
                 if rv is None:
-                    cur.execute('''INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)''', (username, email, password))
+                    cur.execute('INSERT INTO User (Username, Email, Password) VALUES ("%s", "%s", "%s")', (username, email, password))
                     return render_template('login.html', form=form)
                 else:
                     raise ValueError("The Username already exist")
             else:
                 raise ValueError("The Email already exist")
-        except:
-             raise ValueError("The Value is not right")
-        
-
-        # Redirect to send_email route to send confirmation mail
-        # return redirect(url_for('send_email', token=serializer.dumps(email, salt='email')))
+        except Exception as e:
+             # raise ValueError("The Value is not right")
+             raise e
     return render_template('sign_up.html', form=form)
 
 
@@ -56,40 +53,28 @@ def login():
 
     # Create LoginForm() object to validate user input when its submitted as a POST request
     form = LoginForm()
-    # cur = db.get_db().cursor()
-    # cur.execute('''SELECT * FROM User''')
-    # rv = cur.fetchall()
-    # return str(rv)
-
     # If user input has been submitted and been validated log the user in
     if form.validate_on_submit():
         # Extract user inputs
         email = form.email.data.lower()
         password = form.password.data
 
-
-
-        
         # Search for user in database
-        # user = User.query.filter_by(email=email).first()
         cur = db.get_db().cursor()
-        cur.execute('SELECT * FROM User WHERE Email = ' + email)
-        rv = cur.fetchone()
-
+        cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
+        u, e, p = cur.fetchone()
+        user = User(u, e, p)
 
         # If user has been found, the password matches and users email has been confirmed, log user in
-        if user and bcrypt.check_password_hash(user.password, password) :
-            login_user(user, remember=form.remember.data)
+        # if user and bcrypt.check_password_hash(user.password, password) :
+        if User and p == password:
+            login_user(user)
 
             # If login is being accessed from a redirect store target page in variable called next_page
             next_page = request.args.get('next')
 
             # Redirect to target page or home page based on how user got to the login page
-            return redirect(next_page) if next_page else redirect(url_for('home'))
-
-        # If email has not been confirmed yet offer user to resend confirmation mail
-        elif user and bcrypt.check_password_hash(user.password, password) :
-            flash(Markup('Please confirm your email address first <a href="%s">(Resend Email)</a>' % url_for('send_email', token=serializer.dumps(email, salt='email'))))
+            return redirect(next_page) if next_page else redirect(url_for('usermain'))
 
         # Otherwise the user must have entered wrong credentials
         else:
@@ -166,3 +151,8 @@ def send_email(token):
 
     # Redirect to login page
     return redirect(url_for('login'))
+
+#
+@app.route("/usermain", methods=['GET', 'POST'])
+def usermain():
+    return render_template('usermain.html')
