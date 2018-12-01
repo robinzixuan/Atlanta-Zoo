@@ -1,0 +1,19 @@
+{% extends "main.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UserMainPage</title>
+</head>
+<body>
+<button type="button" onclick="{location.href='search_for_exhibits.html'}">Search Exhibits</button>
+<button type="button" onclick="{location.href='search_for_shows.html'}">Search Shows</button>
+<button type="button" onclick="{location.href='exhibit_history.html'}">View Exhibit History</button>
+<button type="button" onclick="{location.href='show_history.html'}">View Show History</button>
+<button type="button" onclick="{location.href='search_for_animals.html'}">Search for Animals</button>
+<a href="{{url_for('logout')}}"><button type="button">Log Out</button></a>
+
+</body>
+</html>
+{% endblock content %}

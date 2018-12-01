@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Atlanta Zoo</title>
+</head>
+<body>
+<button type="button" onclick="{location.href='search_for_animals.html'}">Search Animals</button>
+<button type="button" onclick="{location.href='staff_show_history.html'}">View Shows</button>
+<a href="{{url_for('logout')}}"><button type="button">Log Out</button></a>
+</body>
+</html>
+{% endblock content %}

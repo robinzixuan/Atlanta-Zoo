@@ -160,41 +160,13 @@ app.controller('orderByCtrl', function($scope) {
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>Exhibit History</h1>
+<h1>Staff-Show History</h1>
 </div>
 
 <div id="nav">
 <form action="form_action.asp" method="get">
-  Name: <input type="text" name="fname" /><br>
-  Number of Visits: <br>Max: <input type="button" onclick="add()" value="+">
-<input type="text" id="txt" value="1"/>
-<input type="button" onclick="sub()" value="-"></td><br>
-Min: <input type="button" onclick="add2()" value="+">
-<input type="text" id="txt2" value="1"/>
-<input type="button" onclick="sub2()" value="-"></td><br>
-  Date：<input type="datetime-local" value="2015-09-24T13:59:59"/>
-
-  <input type="submit" value="Search" />
+  {{table}}
 </form>
-
-<table class="table table-border" ng-app="myapp" ng-controller="orderByCtrl">
-  <thead>
-    <tr>
-      <th ng-click="col='name';desc=!desc">Name</th>
-      <th ng-click="col='time';desc=!desc">Time</th>
-      <th ng-click="col='visit';desc=!desc">Number of Visits</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr ng-repeat="d in data|orderBy:col:desc">
-      <td ng-bind="d.name"></td>
-      <td ng-bind="d.time"></td>
-      <td ng-bind="d.visit"></td>
-
-    </tr>
-  </tbody>
-</table>
-
 </div>
 
 </body>

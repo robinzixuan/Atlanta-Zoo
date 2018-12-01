@@ -1,0 +1,19 @@
+{% extends "main.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AdminMainPage</title>
+</head>
+<body>
+<button type="button" onclick="{location.href='view_visitors.html'}">View Visitors</button>
+<button type="button" onclick="{location.href='view_staff.html'}">View Staff</button>
+<button type="button" onclick="{location.href='view_shows.html'}">View Shows</button>
+<button type="button" onclick="{location.href='view_animals.html'}">View Animals</button>
+<button type="button" onclick="{location.href='add_animals.html'}">Add Animals</button>
+<button type="button" onclick="{location.href='add_shows.html'}">Add Show</button>
+<a href="{{url_for('logout')}}"><button type="button">Log Out</button></a>
+</body>
+</html>
+{% endblock content %}

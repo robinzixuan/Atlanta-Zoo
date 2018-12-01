@@ -4,10 +4,10 @@
 
 <style>
 #header{
-  background-color: black;
-  color:white; 
-  text-align:center;
-  padding: 3px;
+	background-color: black;
+	color:white; 
+	text-align:center;
+	padding: 3px;
 }
 
 #nav {
@@ -91,80 +91,28 @@ th
 }
 
 </style>
-<script>
-    function add(){
-        var txt=document.getElementById("txt");
-        var a=txt.value;
-        a++;
-        txt.value=a;
-    }
-    function sub(){
-        var txt=document.getElementById("txt");
-        var a=txt.value;
-        if(a>1){
-            a--;
-            txt.value=a;
-        }else{
-            txt.value=1;
-        }
-    }
-    function add2(){
-        var txt=document.getElementById("txt2");
-        var a=txt.value;
-        a++;
-        txt.value=a;
-    }
-    function sub2(){
-        var txt=document.getElementById("txt2");
-        var a=txt.value;
-        if(a>1){
-            a--;
-            txt.value=a;
-        }else{
-            txt.value=1;
-        }
-    }
-
-   var app = angular.module('myapp', []);
-app.controller('orderByCtrl', function($scope) {
-  $scope.col = 'name';//默认按name列排序
-  $scope.desc = 0;//默认排序条件升序
-  $scope.data = [{
-    name: 'name 1',
-    species: 'Fish',
-    exhibit: 'Pacific',
-    age: 3,
-    type: 'Fish'
-  }, {
-    name: 'name 2',
-    species: 'Fish',
-    exhibit: 'Pacific',
-    age: 4,
-    type: 'Submarine'
-  }, {
-    name: 'name 3',
-    species: 'Insects',
-    exhibit: 'Land',
-    age: 5,
-    type: 'Insects'
-  }, {
-    name: 'name 4',
-    species: 'Sheep',
-    exhibit: 'Forest',
-    age: 2,
-    type: 'Sheep'
-  }];
-})
-</script>
 
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>Staff- Show History</h1>
+<h1>Exhibit Detail</h1>
 </div>
 
-<p>{{ table }}</p>
-    <a href="{{url_for('staff')}}"><button type="button">Back</button></a>
+<div id="nav">
+<form action="form_action.asp" method="get">
+  {{form.name.label}}
+  {{form.size.label}}
+  {{form.num_animals.label}}
+  {{form.water_feature.label}}
+  <div class="input">
+    {{form.log_visit}}
+  </div>
+  
+</form>
+
+{{table}}
+
+</div>
 
 </body>
 </html>

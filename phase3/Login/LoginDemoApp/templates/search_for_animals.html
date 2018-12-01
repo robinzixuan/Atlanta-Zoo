@@ -165,31 +165,43 @@ app.controller('orderByCtrl', function($scope) {
 
 <div id="nav">
 <form action="form_action.asp" method="get">
-  Name: <input type="text" name="fname" /><br>
-  Species: <input type="text" name="lname" /><br>
-  Exhibit: <select>
-  <option value ="Pacific">Pacific</option>
-  <option value ="Land">Land</option>
-  <option value="Forest">Forest</option>
-  <option value="Underground">Underground</option>
-</select><br>
-  Age: <br>Max: <input type="button" onclick="add()" value="+">
-<input type="text" id="txt" value="1"/>
-<input type="button" onclick="sub()" value="-"></td><br>
-Min: <input type="button" onclick="add2()" value="+">
-<input type="text" id="txt2" value="1"/>
-<input type="button" onclick="sub2()" value="-"></td><br>
-  Type: <select>
-  <option value ="Fish">Fish</option>
-  <option value ="Carnivore">Carnivore</option>
-  <option value="Herbivore">Herbivore</option>
-  <option value="Insects">Insects</option>
-</select><br>
+  {{ form.name.label }}
+  <div class="input">
+    {{form.name}}
+  </div>
+  {{ form.species.label}}
+  <div class = "input">
+    {{form.species}}
+  </div>
+  {{form.exhibit.label}}
+  <div class = "select">
+    {{form.exhibit}}
+  </div>
+  Age: <br>
+  {{form.age_max.label}} <input type="button" onclick="add()" value="+">
+  <div class = "input" type="text" id="txt" value="1">
+    {{form.age_max}}
+  </div>
+  <input type="button" onclick="sub()" value="-"></td><br>
 
-  <input type="submit" value="Search" />
+{{form.age_min.label}} <input type="button" onclick="add2()" value="+">
+  <div class = "input" type="text" id="txt" value="1">
+    {{form.age_min}}
+  </div>
+  <input type="button" onclick="sub2()" value="-"></td><br>
+  {{form.type.label}}
+  <div class = "select">
+    {{form.type}}
+  </div>
+<div class = "input"> 
+       {{ form.search }}
+</div>
+<!--   <input type="submit" value="Search" /> -->
 </form>
 
-<table class="table table-border" ng-app="myapp" ng-controller="orderByCtrl">
+{{table}}
+
+<!-- <table class="table table-border" ng-app="myapp" ng-controller="orderByCtrl">
   <thead>
     <tr>
       <th ng-click="col='name';desc=!desc">Name</th>
@@ -209,9 +221,8 @@ Min: <input type="button" onclick="add2()" value="+">
 
     </tr>
   </tbody>
-</table>
+</table> -->
 
 </div>
-
 </body>
 </html>

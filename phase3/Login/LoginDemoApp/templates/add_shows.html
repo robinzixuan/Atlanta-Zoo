@@ -160,42 +160,61 @@ app.controller('orderByCtrl', function($scope) {
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>Shows</h1>
+<h1>Add Show</h1>
 </div>
 
 <div id="nav">
 <form action="form_action.asp" method="get">
-  Name: <input type="text" name="fname" /><br>
-  Exhibit: <select>
-  <option value ="Pacific">Pacific</option>
-  <option value ="Land">Land</option>
-  <option value="Forest">Forest</option>
-  <option value="Underground">Underground</option>
-</select><br>
-  Date：<input type="datetime-local" value="2015-09-24T13:59:59"/>
-
-  <input type="submit" value="Search" />
+  {{ form.name.label }}
+  <div class="input">
+    {{form.name}}
+  </div>
+  {{form.exhibit.label}}
+  <div class = "select">
+    {{form.exhibit}}
+  </div>
+  {{form.staff.label}}
+  <div class = "select">
+    {{form.staff}}
+  </div>
+  {{form.date.label}}
+  <div class="input" type="datetime-local" value="2015-09-24T13:59:59">
+    {{form.date}}
+  </div>
+  {{form.time.label}}
+  <div class="input">
+    {{form.time}}
+  </div>
+  
+<div class = "input"> 
+       {{ form.add_show }}
+</div>
+<!--   <input type="submit" value="Search" /> -->
 </form>
 
-<table class="table table-border" ng-app="myapp" ng-controller="orderByCtrl">
+
+<!-- <table class="table table-border" ng-app="myapp" ng-controller="orderByCtrl">
   <thead>
     <tr>
       <th ng-click="col='name';desc=!desc">Name</th>
+      <th ng-click="col='species';desc=!desc">Species</th>
       <th ng-click="col='exhibit';desc=!desc">Exhibit</th>
-      <th ng-click="col='date';desc=!desc">Date</th>
+      <th ng-click="col='age';desc=!desc">Age</th>
+      <th ng-click="col='type';desc=!desc">Type</th>
     </tr>
   </thead>
   <tbody>
     <tr ng-repeat="d in data|orderBy:col:desc">
       <td ng-bind="d.name"></td>
+      <td ng-bind="d.species"></td>
       <td ng-bind="d.exhibit"></td>
-      <td ng-bind="d.date"></td>
+      <td ng-bind="d.age"></td>
+      <td ng-bind="d.type"></td>
 
     </tr>
   </tbody>
-</table>
- <input type="submit" value="Log Visit" />
-</div>
+</table> -->
 
+</div>
 </body>
 </html>
