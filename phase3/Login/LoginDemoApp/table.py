@@ -13,7 +13,7 @@ class ExhibitsTable(Table):
     name = Col('Name')
     size = Col('Size')
     num_animals = Col('NumAnimals')
-    water = Col('Water')
+    is_water = Col('Water')
 
 
 class Show:
@@ -41,3 +41,12 @@ class AnimalTable(Table):
     exhibit = Col('Exhibit')
     age = Col('Age')
     type = Col('Type')
+
+class User_info:
+    def __init__(self, username, email):
+        self.username = username
+        self.email = email
+
+class UsersTable(Table):
+    username = Col('Username')
+    email = Col('Email')
