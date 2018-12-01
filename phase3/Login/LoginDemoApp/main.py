@@ -204,7 +204,6 @@ def staff_view_shows():
     cur = db.get_db().cursor()
     cur.execute('SELECT * FROM Shows WHERE Hostby = %s', current_user.username)
     fetch = cur.fetchall()
-    # print(fetch)
     table = ShowsTable([Show(n, d, e) for n, d, e, _ in fetch])
     return render_template('staff_view_shows.html', table=table)
 
@@ -213,21 +212,34 @@ def staff_view_shows():
 @login_required
 def staff_search_animal():
     form = SearchAnimalForm()
+    table = AnimalTable([])
     if form.is_submitted():
-        return redirect(url_for("staff"))
-    return render_template('staff_search_animal.html', form=form)
+        name =form.name.data
+        species = form.species.data
+        age_min = form.age_min.data
+        age_max = form.age_max.data
+        exhibit = form.exhibit.data
+        type = form.type.data
+        # todo: age
+        # todo: name and species
+        cur = db.get_db().cursor()
+        cur.execute('SELECT * FROM Animal WHERE Type = %s AND Place = %s', (type, exhibit))
+        fetch = cur.fetchall()
+        table = AnimalTable([Animal(name, sp, t, age, ex) for name, sp, t, age, ex in fetch])
+        return render_template('staff_search_animal.html', form=form, table=table)
+    return render_template('staff_search_animal.html', form=form, table=table)
 
 
 @app.route("/staff_animal_care", methods=['GET', 'POST'])
 @login_required
 def staff_animal_care():
-    return render_template('staff_view_shows.html')
+    # todo: link col
+    return render_template('staff_animal_care.html.html')
 
 
 @app.route("/admin", methods=['GET', 'POST'])
 @login_required
 def admin():
-    # print(type(current_user), dir(current_user))
     return render_template('admin.html')
 
 
