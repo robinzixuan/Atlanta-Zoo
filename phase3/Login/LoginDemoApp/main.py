@@ -131,19 +131,14 @@ def logout():
 # def exhibit_detail():
 #     return render_template("exhibit_detail.html")
 #
-# @login_required
-# @app.route("/")
-# def ():
-#     return render_template()
 #
 #
 #
 # ### visitor stuff
-# @app.route("/visitor", methods=['GET', 'POST'])
-# @login_required
-# def visitormain():
-#     # print(type(current_user), dir(current_user))
-#     return render_template('visitormain.html')
+@app.route("/visitor", methods=['GET', 'POST'])
+@login_required
+def visitor():
+    return render_template('visitor.html')
 #
 # @app.route("/visitor_search_exhibit", methods=['GET', 'POST'])
 # @login_required
@@ -188,10 +183,53 @@ def staff_view_shows():
     cur = db.get_db().cursor()
     cur.execute('SELECT * FROM Shows WHERE Hostby = %s', current_user.username)
     fetch = cur.fetchall()
-    name, date, exhibit, _ = fetch
-    return render_template('staff_view_shows.html', name=name, time=date, exhibit=exhibit)
+    print(fetch)
+    table = ShowsTable([Show(n, d, e) for n, d, e, _ in fetch])
+    return render_template('staff_view_shows.html', table=table)
+
+@app.route("/staff_search_animal", methods=['GET', 'POST'])
+@login_required
+def staff_search_animal():
+    return render_template('show.html')
 #
-# @app.route("/staff_search_animal", methods=['GET', 'POST'])
+# @app.route("/staff_animal_care", methods=['GET', 'POST'])
 # @login_required
-# def staff_search_animal():
+# def staff_animal_care():
 #     return render_template('show.html')
+
+### admin stuff
+# @login_required
+# @app.route("/admin_view_staff")
+# def admin_view_staff():
+#     return render_template("admin_view_staff.html")
+#
+# @login_required
+# @app.route("/admin_view_visitor")
+# def admin_view_visitor():
+#     return render_template("admin_view_visitor.html")
+#
+# @login_required
+# @app.route("/admin_view_shows")
+# def admin_view_shows():
+#     return render_template("admin_view_shows.html")
+#
+# @login_required
+# @app.route("/admin_view_animal")
+# def admin_view_animal():
+#     return render_template("admin_view_animal.html")
+#
+# @login_required
+# @app.route("/admin_add_animal")
+# def admin_add_animal():
+#     return render_template("admin_add_animal.html")
+#
+# @login_required
+# @app.route("/admin_add_shows")
+# def admin_add_shows():
+#     return render_template("admin_add_shows.html")
+
+
+
+
+
+

@@ -7,9 +7,7 @@
 <body>
     <p>Hello {{current_user.username}} you are logged in</p>
     <p>Your shows:</p>
-    <p>Name:{{ name }}</p>
-    <p>Time:{{ time }}</p>
-    <p>Exhibit:{{ exhibit }}</p>
+    <p>{{ table }}</p>
     <a href="{{url_for('staff')}}"><button type="button">Back</button></a>
 </body>
 </html>

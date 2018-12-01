@@ -1,7 +1,8 @@
 # from LoginDemoApp.database_tables import User
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+
 from LoginDemoApp.database_tables import load_user
 
 
@@ -28,7 +29,29 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
-# class StaffShowsForm(FlaskForm):
-# #     name = StringField('Name')
-# #     time = StringField('time')
-# #     exhibit = StringField('exhibit')
+class SearchExhibitsForm(FlaskForm):
+    name = StringField('Name')
+    search = SubmitField('Search')
+    num_animal_min = StringField('Min')
+    num_animal_max = StringField('Max')
+    water_feture = SelectField('Water Feature', choices=[('Yes', 'Yes'),('No', 'No')])
+    size_min = StringField('Min')
+    size_max = StringField('Max')
+
+
+class SearchAnimal(FlaskForm):
+    name = StringField('Name')
+    search = SubmitField('Search')
+    species = StringField('Species')
+    age_min = StringField('Min')
+    age_max = StringField('Max')
+    exhibit = SelectField('Exhibit', choices=[('Pacific', 'Pacific'), ('Jungle', 'Jungle'), ('Sahara', 'Sahara'), ('Mountainous','Mountanious')])
+    type = SelectField('Type', choices=[('Mammal', 'Mammal'), ('Fish', 'Fish'), ('Amphibian', 'Amphibian'), ('Bird','Bird')])
+
+
+class SearchShows(FlaskForm):
+    name = StringField('Name')
+    exhibit = SelectField('Exhibit', choices=[('Pacific', 'Pacific'), ('Jungle', 'Jungle'), ('Sahara', 'Sahara'),
+                                              ('Mountainous', 'Mountanious')])
+    date = DateField('Date', format = '%m/%d/%Y')
+    search = SubmitField('Search')
