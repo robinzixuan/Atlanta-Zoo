@@ -5,6 +5,7 @@ from LoginDemoApp.table import *
 from flask import render_template, url_for, flash, Markup, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
 from itsdangerous import SignatureExpired, BadTimeSignature
+import hashlib
 
 
 @app.route("/")
@@ -21,6 +22,7 @@ def sign_up():
         username = visitor_form.username.data.lower()
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
+        password = hashlib.sha1(password.encode()).hexdigest()
         cur = db.get_db().cursor()
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
         rv = cur.fetchone()
@@ -41,9 +43,9 @@ def sign_up():
         username = visitor_form.username.data.lower()
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
-
+        password = hashlib.sha1(password.encode()).hexdigest()
         cur = db.get_db().cursor()
-
+        
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
         rv = cur.fetchone()
         if rv is None:
@@ -76,7 +78,6 @@ def login():
         email = form.email.data.lower()
         password = form.password.data
         # print(email, password)
-
         # Search for user in database
         cur = db.get_db().cursor()
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
@@ -84,7 +85,7 @@ def login():
         if fetch:
             # print(fetch)
             u, e, p = fetch
-            if p == password:
+            if p == (hashlib.sha1(password.encode()).hexdigest()):
                 user = User(u, e, p)
 
                 # check use type
