@@ -1,5 +1,6 @@
 from flask_table import Table, Col
 
+
 class Exhibit:
     def __init__(self, name, size, num_animals, is_water):
         self.name = name
@@ -26,6 +27,13 @@ class ShowsTable(Table):
     time = Col('Time')
     exhibit = Col('Exhibit')
 
+class Animal:
+    def __init__(self, name, species, exhibit, age, type):
+        self.name = name
+        self.species = species
+        self.exhibit = exhibit
+        self.age = age
+        self.type = type
 
 class AnimalTable(Table):
     name = Col('Name')
