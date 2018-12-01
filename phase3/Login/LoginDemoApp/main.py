@@ -5,6 +5,11 @@ from LoginDemoApp.table import *
 from flask import render_template, url_for, flash, Markup, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
 from itsdangerous import SignatureExpired, BadTimeSignature
+from pymysql.err import IntegrityError
+
+
+import hashlib
+
 
 
 @app.route("/")
@@ -21,6 +26,7 @@ def sign_up():
         username = visitor_form.username.data.lower()
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
+        password = hashlib.sha1(password.encode()).hexdigest()
         cur = db.get_db().cursor()
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
         rv = cur.fetchone()
@@ -41,6 +47,7 @@ def sign_up():
         username = visitor_form.username.data.lower()
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
+        password = hashlib.sha1(password.encode()).hexdigest()
 
         cur = db.get_db().cursor()
 
@@ -76,6 +83,8 @@ def login():
         # Extract user inputs
         email = form.email.data.lower()
         password = form.password.data
+        password = hashlib.sha1(password.encode()).hexdigest()
+
         # print(email, password)
 
         # Search for user in database
@@ -274,6 +283,10 @@ def admin_view_show():
     if form.is_submitted():
         print(form.search.data, form.remove.data)
         if form.search.data:
+            name = form.name.data
+            exhibit = form.exhibit.data
+            date = form.date.data
+
             flash('SEARCH')
             return redirect(url_for('admin'))
         elif form.remove.data:
@@ -285,31 +298,58 @@ def admin_view_show():
 @login_required
 @app.route("/admin_view_animal", methods=['GET', 'POST'])
 def admin_view_animal():
-    search_animal = SearchAnimalForm()
+    form = SearchAnimalForm()
     table = AnimalTable([])
-    if search_animal.is_submitted():
-        return redirect(url_for('admin'))
-    return render_template("admin_view_animal.html", form=search_animal, table=table)
+    if form.is_submitted():
+        name = form.name.data
+        species = form.species.data
+        age_min = form.age_min.data
+        age_max = form.age_max.data
+        exhibit = form.exhibit.data
+        type = form.type.data
+        cur = db.get_db().cursor()
+        cur.execute('SELECT * FROM Animal WHERE Type = %s AND Place = %s', (type, exhibit))
+        fetch = cur.fetchall()
+        table = AnimalTable([Animal(name, sp, t, age, ex) for name, sp, t, age, ex in fetch])
+        return render_template('staff_search_animal.html', form=form, table=table)
+    return render_template("admin_view_animal.html", form=form, table=table)
 
-
+# done
 @login_required
 @app.route("/admin_add_animal", methods=['GET', 'POST'])
 def admin_add_animal():
-    animal_form = AddAnimalForm()
-    if animal_form.is_submitted():
-        # flash('HAHAHA')
-        # todo: age change
-        # todo: add animal to database
+    form = AddAnimalForm()
+    if form.is_submitted():
+        print(form.validate())
+        name = form.name.data
+        species = form.species.data
+        age = form.age.data
+        exhibit = form.exhibit.data
+        type = form.type.data
+        try:
+            cur = db.get_db().cursor()
+            cur.execute('INSERT INTO Animal VALUES(%s, %s, %s, %s, %s)', (name, species, type, age, exhibit))
+            flash("Add animal successful")
+        except IntegrityError as e:
+            flash("Add animal Failed!\n" + str(e.args[1]))
         return redirect(url_for('admin'))
-    return render_template("admin_add_animal.html", form=animal_form)
+    return render_template("admin_add_animal.html", form=form)
 
-
+# done
 @login_required
 @app.route("/admin_add_show", methods=['GET', 'POST'])
 def admin_add_show():
-    show_form = AddShowForm()
-    if show_form.is_submitted():
-        # flash('HAHAHA')
-        # todo: add show to database
+    form = AddShowForm()
+    if form.is_submitted():
+        name = form.name.data
+        staff = form.staff.data
+        exhibit = form.exhibit.data
+        date = form.date.data
+        try:
+            cur = db.get_db().cursor()
+            cur.execute('INSERT INTO Shows VALUES(%s, %s, %s, %s)', (name, date, exhibit, staff))
+            flash("Add show successful")
+        except IntegrityError as e:
+            flash("Add show Failed!\n" + str(e.args[1]))
         return redirect(url_for('admin'))
-    return render_template("admin_add_show.html", form=show_form)
+    return render_template("admin_add_show.html", form=form)

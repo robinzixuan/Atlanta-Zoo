@@ -1,5 +1,8 @@
 from flask_table import Table, Col
 
+# from LoginDemoApp import db
+#
+# cur = db.get_db().cursor()
 
 class Exhibit:
     def __init__(self, name, size, num_animals, is_water):
@@ -16,14 +19,36 @@ class ExhibitsTable(Table):
     is_water = Col('Water')
 
 
+class ExhibitHistoryTable(Table):
+    name = Col('Name')
+    time = Col('Time')
+    num_of_visits = Col('Number of Visits')
+
+
+class ExhibitDetailTable(Table):
+    name = Col('Name')
+    species = Col('Species')
+
+
 class Show:
     def __init__(self, name, time, exhibit):
         self.name = name
         self.time = time
         self.exhibit = exhibit
 
-
 class ShowsTable(Table):
+    name = Col('Name')
+    time = Col('Time')
+    exhibit = Col('Exhibit')
+
+
+class ShowHistoryTable(Table):
+    name = Col('Name')
+    time = Col('Time')
+    exhibit = Col('Exhibit')
+
+
+class StaffShowHistoryTable(Table):
     name = Col('Name')
     time = Col('Time')
     exhibit = Col('Exhibit')
@@ -37,7 +62,6 @@ class Animal:
         self.age = age
         self.type = type
 
-
 class AnimalTable(Table):
     name = Col('Name')
     species = Col('Species')
@@ -45,13 +69,22 @@ class AnimalTable(Table):
     age = Col('Age')
     type = Col('Type')
 
-
 class User_info:
     def __init__(self, username, email):
         self.username = username
         self.email = email
 
-
 class UsersTable(Table):
     username = Col('Username')
+    email = Col('Email')
+
+
+class AnimalCareTable(Table):
+    staff_member = Col('Staff Member')
+    note = Col('Note')
+    time = Col('Time')
+
+
+class ViewVisitorsTable(Table):
+    name = Col('Username')
     email = Col('Email')

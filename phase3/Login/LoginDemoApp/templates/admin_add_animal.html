@@ -165,21 +165,49 @@ app.controller('orderByCtrl', function($scope) {
 
 <div id="nav">
 <form action="" method="POST">
-  {{ form.name.label }}
-  <div class="input">
-    {{form.name}}
-  </div>
-  {{form.exhibit.label}}
-  <div class = "select">
-    {{form.exhibit}}
-  </div>
+       {{ form.hidden_tag() }}
+    {{ form.name.label }}
+            <div class="input">
+                {% if form.name.errors %}
+                    {{ form.name }}
+                    <div class="invalid-feedback">
+                        {% for error in form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.name }}
+                {% endif %}
+            </div>
+    {{ form.exhibit.label }}
+            <div class="input">
+                {% if form.exhibit.errors %}
+                    {{ form.exhibit }}
+                    <div class="invalid-feedback">
+                        {% for error in form.exhibit.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.exhibit }}
+                {% endif %}
+            </div>
+        {{ form.species.label }}
+            <div class="input">
+                {% if form.species.errors %}
+                    {{ form.species }}
+                    <div class="invalid-feedback">
+                        {% for error in form.species.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.species }}
+                {% endif %}
+            </div>
   {{form.type.label}}
   <div class = "select">
     {{form.type}}
-  </div>
-  {{form.species.label}}
-  <div class="input">
-    {{form.species}}
   </div>
   {{form.age.label}}
   <input type="button" onclick="add()" value="+">
