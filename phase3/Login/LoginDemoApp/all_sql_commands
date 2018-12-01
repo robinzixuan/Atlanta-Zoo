@@ -1,0 +1,5 @@
+# login
+SELECT * FROM User where Email= email
+
+# sign up
+INSERT INTO User (Username, Email, Password) VALUES (user, email, password)
