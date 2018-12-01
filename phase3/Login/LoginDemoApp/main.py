@@ -190,12 +190,12 @@ def staff_view_shows():
 @app.route("/staff_search_animal", methods=['GET', 'POST'])
 @login_required
 def staff_search_animal():
-    return render_template('show.html')
+    return render_template('staff_view_shows_1.html')
 #
 # @app.route("/staff_animal_care", methods=['GET', 'POST'])
 # @login_required
 # def staff_animal_care():
-#     return render_template('show.html')
+#     return render_template('staff_view_shows.html')
 
 ### admin stuff
 # @login_required
