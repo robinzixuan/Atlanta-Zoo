@@ -8,17 +8,17 @@ def load_user(email):
 
 
 class User(UserMixin):
-    def __init__(self, username, email, password):
+    def __init__(self, username, email, password, usertype):
         self.email=email
         self.username=username
         self.password=password
-        self.type = ""
+        self.usertype = usertype
 
     def get_id(self):
         return self.email
 
     def set_type(self, t):
-        self.type = t
+        self.usertype = t
 
     @staticmethod
     def get(email):
@@ -32,5 +32,11 @@ class User(UserMixin):
         rv = cur.fetchone()
         if rv:
             username, email, password = rv
-            return User(username, email, password)
+            cur.execute('SELECT * FROM Visitor WHERE Username = "%s"' % username)
+            if cur.fetchone():
+                return User(username, email, password, "visitor")
+            cur.execute('SELECT * FROM Staff WHERE Username = "%s"' % username)
+            if cur.fetchone():
+                return User(username, email, password, "staff")
+            return User(username, email, password, "admin")
         return None

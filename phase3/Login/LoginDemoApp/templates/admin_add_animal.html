@@ -160,31 +160,62 @@ app.controller('orderByCtrl', function($scope) {
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>Show History</h1>
+<h1>Add Animal</h1>
 </div>
 
 <div id="nav">
 <form action="" method="POST">
-  {{form.name.label}}
-  <div class="input"type="text" name="fname" >
+  {{ form.name.label }}
+  <div class="input">
     {{form.name}}
   </div>
   {{form.exhibit.label}}
-  <div class="select">
+  <div class = "select">
     {{form.exhibit}}
   </div>
-  {{form.date.label}}
-  <div class="input" type="datetime-local" value="2015-09-24T13:59:59">
-    {{form.date}}
+  {{form.type.label}}
+  <div class = "select">
+    {{form.type}}
   </div>
-
-  <div class = "input">
-       {{ form.search }}
-     </div>
+  {{form.species.label}}
+  <div class="input">
+    {{form.species}}
+  </div>
+  {{form.age.label}}
+  <input type="button" onclick="add()" value="+">
+  <input type="text" id="txt" value="1">
+    {{form.age}}
+  <input type="button" onclick="sub()" value="-"></td><br>
+  
+<div class = "input"> 
+       {{ form.submit }}
+</div>
+<!--   <input type="submit" value="Search" /> -->
 </form>
 
-{{table}}
-</div>
 
+<!-- <table class="table table-border" ng-app="myapp" ng-controller="orderByCtrl">
+  <thead>
+    <tr>
+      <th ng-click="col='name';desc=!desc">Name</th>
+      <th ng-click="col='species';desc=!desc">Species</th>
+      <th ng-click="col='exhibit';desc=!desc">Exhibit</th>
+      <th ng-click="col='age';desc=!desc">Age</th>
+      <th ng-click="col='type';desc=!desc">Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="d in data|orderBy:col:desc">
+      <td ng-bind="d.name"></td>
+      <td ng-bind="d.species"></td>
+      <td ng-bind="d.exhibit"></td>
+      <td ng-bind="d.age"></td>
+      <td ng-bind="d.type"></td>
+
+    </tr>
+  </tbody>
+</table> -->
+
+</div>
 </body>
 </html>

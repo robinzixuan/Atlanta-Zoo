@@ -4,10 +4,10 @@
 
 <style>
 #header{
-  background-color: black;
-  color:white; 
-  text-align:center;
-  padding: 3px;
+	background-color: black;
+	color:white;
+	text-align:center;
+	padding: 3px;
 }
 
 #nav {
@@ -17,7 +17,7 @@
     height:600px;
     width: 1000px;
     float:left;
-    padding:3px; 
+    padding:3px;
 
 }
 
@@ -160,11 +160,14 @@ app.controller('orderByCtrl', function($scope) {
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>Staff- Show History</h1>
+<h1>Staff-Show History</h1>
 </div>
 
-<p>{{ table }}</p>
-    <a href="{{url_for('staff')}}"><button type="button">Back</button></a>
+<div id="nav">
+<form action="form_action.asp" method="get">
+  {{table}}
+</form>
+</div>
 
 </body>
 </html>

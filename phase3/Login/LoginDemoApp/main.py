@@ -5,7 +5,6 @@ from LoginDemoApp.table import *
 from flask import render_template, url_for, flash, Markup, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
 from itsdangerous import SignatureExpired, BadTimeSignature
-import hashlib
 
 
 @app.route("/")
@@ -22,7 +21,6 @@ def sign_up():
         username = visitor_form.username.data.lower()
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
-        password = hashlib.sha1(password.encode()).hexdigest()
         cur = db.get_db().cursor()
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
         rv = cur.fetchone()
@@ -43,16 +41,17 @@ def sign_up():
         username = visitor_form.username.data.lower()
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
-        password = hashlib.sha1(password.encode()).hexdigest()
+
         cur = db.get_db().cursor()
-        
+
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
         rv = cur.fetchone()
         if rv is None:
             cur.execute('SELECT * FROM User WHERE Username = "%s"' % username)
             rv = cur.fetchone()
             if rv is None:
-                cur.execute('INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)', (username, email, password))
+                cur.execute('INSERT INTO User (Username, Email, Password) VALUES (%s, %s, %s)',
+                            (username, email, password))
                 cur.execute('INSERT INTO Staff VALUES (%s)', username)
                 flash('Sign up successful')
                 return redirect(url_for('home'))
@@ -63,7 +62,6 @@ def sign_up():
     return render_template('sign_up.html', form=visitor_form)
 
 
-
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     # If user is already logged in redirect to home page
@@ -71,6 +69,7 @@ def login():
         return redirect(url_for('home'))
 
     # Create LoginForm() object to validate user input when its submitted as a POST request
+
     form = LoginForm()
     # If user input has been submitted and been validated log the user in
     if form.validate_on_submit():
@@ -78,6 +77,7 @@ def login():
         email = form.email.data.lower()
         password = form.password.data
         # print(email, password)
+
         # Search for user in database
         cur = db.get_db().cursor()
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
@@ -85,8 +85,8 @@ def login():
         if fetch:
             # print(fetch)
             u, e, p = fetch
-            if p == (hashlib.sha1(password.encode()).hexdigest()):
-                user = User(u, e, p)
+            if p == password:
+                user = User(u, e, p, "")
 
                 # check use type
                 cur = db.get_db().cursor()
@@ -94,7 +94,7 @@ def login():
                 if cur.fetchone():
                     user.set_type("visitor")
                     login_user(user)
-                    return redirect(url_for('visitormain'))
+                    return redirect(url_for('visitor'))
                 cur.execute('SELECT * FROM Staff WHERE Username = "%s"' % u)
                 if cur.fetchone():
                     # print("staff")
@@ -104,7 +104,7 @@ def login():
                 # print("admin")
                 user.set_type("admin")
                 login_user(user)
-                return redirect(url_for('visitormain'))
+                return redirect(url_for('admin'))
             else:
                 flash('Wrong password. Please check your credentials')
         else:
@@ -121,55 +121,74 @@ def logout():
     # Log out user and redirect to home page
     logout_user()
     return redirect(url_for('home'))
-#
-# @login_required
-# @app.route("/animal_detail")
-# def animal_detail():
-#     return render_template("animal_detail.html")
-#
-# @login_required
-# @app.route("/exhibit_detail")
-# def exhibit_detail():
-#     return render_template("exhibit_detail.html")
-#
-#
-#
-#
+
+
+@login_required
+@app.route("/animal_detail", methods=['GET', 'POST'])
+def animal_detail():
+    return render_template("animal_detail.html")
+
+
+@login_required
+@app.route("/exhibit_detail", methods=['GET', 'POST'])
+def exhibit_detail():
+    return render_template("exhibit_detail.html")
+
+
 # ### visitor stuff
 @app.route("/visitor", methods=['GET', 'POST'])
 @login_required
 def visitor():
     return render_template('visitor.html')
-#
-# @app.route("/visitor_search_exhibit", methods=['GET', 'POST'])
-# @login_required
-# def visitor_search_exhibit():
-#     return render_template("visitor_search_exhibit.html")
-#
-# @login_required
-# @app.route("/visitor_search_animal")
-# def visitor_search_animal():
-#     return render_template("visitor_search_animal.html")
-#
-# @login_required
-# @app.route("/visitor_search_show")
-# def visitor_search_show():
-#     return render_template("visitor_search_show.html")
-#
-# @login_required
-# @app.route("/visitor_exhibit_history")
-# def visitor_exhibit_history():
-#     return render_template("visitor_exhibit_history.html")
-#
-# @login_required
-# @app.route("/visitor_show_history")
-# def visitor_show_history():
-#     return render_template("visitor_show_history.html")
-#
-#
-#
-#
-#
+
+
+@app.route("/visitor_search_exhibit", methods=['GET', 'POST'])
+@login_required
+def visitor_search_exhibit():
+    form = SearchExhibitsForm()
+    table = ExhibitsTable([])
+    if form.is_submitted():
+        return redirect(url_for("visitor"))
+    return render_template("visitor_search_exhibit.html", form=form, table=table)
+
+
+@login_required
+@app.route("/visitor_search_animal", methods=['GET', 'POST'])
+def visitor_search_animal():
+    form = SearchAnimalForm()
+    if form.is_submitted():
+        return redirect(url_for("visitor"))
+    return render_template("visitor_search_animal.html", form=form)
+
+
+@login_required
+@app.route("/visitor_search_show", methods=['GET', 'POST'])
+def visitor_search_show():
+    form = SearchShowsForm()
+    if form.is_submitted():
+        return redirect(url_for("visitor"))
+    return render_template("visitor_search_show.html", form=form)
+
+
+@login_required
+@app.route("/visitor_exhibit_history", methods=['GET', 'POST'])
+def visitor_exhibit_history():
+    form = SearchExhibitsHistoryForm()
+    table = ExhibitsTable([])
+    if form.is_submitted():
+        return redirect(url_for("visitor"))
+    return render_template("visitor_exhibit_history.html", form=form, table=table)
+
+
+@login_required
+@app.route("/visitor_show_history", methods=['GET', 'POST'])
+def visitor_show_history():
+    form = SearchShowsForm()
+    table = ShowsTable([])
+    if form.is_submitted():
+        return redirect(url_for("visitor"))
+    return render_template("visitor_show_history.html", form=form, table=table)
+
 
 ### staff stuff
 @app.route("/staff", methods=['GET', 'POST'])
@@ -178,59 +197,119 @@ def staff():
     # print(type(current_user), dir(current_user))
     return render_template('staff.html')
 
+
 @app.route("/staff_view_shows", methods=['GET', 'POST'])
 @login_required
 def staff_view_shows():
     cur = db.get_db().cursor()
     cur.execute('SELECT * FROM Shows WHERE Hostby = %s', current_user.username)
     fetch = cur.fetchall()
-    print(fetch)
     table = ShowsTable([Show(n, d, e) for n, d, e, _ in fetch])
     return render_template('staff_view_shows.html', table=table)
+
 
 @app.route("/staff_search_animal", methods=['GET', 'POST'])
 @login_required
 def staff_search_animal():
-    return render_template('staff_view_shows_1.html')
-#
-# @app.route("/staff_animal_care", methods=['GET', 'POST'])
-# @login_required
-# def staff_animal_care():
-#     return render_template('staff_view_shows.html')
-
-### admin stuff
-# @login_required
-# @app.route("/admin_view_staff")
-# def admin_view_staff():
-#     return render_template("admin_view_staff.html")
-#
-# @login_required
-# @app.route("/admin_view_visitor")
-# def admin_view_visitor():
-#     return render_template("admin_view_visitor.html")
-#
-# @login_required
-# @app.route("/admin_view_shows")
-# def admin_view_shows():
-#     return render_template("admin_view_shows.html")
-#
-# @login_required
-# @app.route("/admin_view_animal")
-# def admin_view_animal():
-#     return render_template("admin_view_animal.html")
-#
-# @login_required
-# @app.route("/admin_add_animal")
-# def admin_add_animal():
-#     return render_template("admin_add_animal.html")
-#
-# @login_required
-# @app.route("/admin_add_shows")
-# def admin_add_shows():
-#     return render_template("admin_add_shows.html")
+    form = SearchAnimalForm()
+    table = AnimalTable([])
+    if form.is_submitted():
+        name =form.name.data
+        species = form.species.data
+        age_min = form.age_min.data
+        age_max = form.age_max.data
+        exhibit = form.exhibit.data
+        type = form.type.data
+        # todo: age
+        # todo: name and species
+        cur = db.get_db().cursor()
+        cur.execute('SELECT * FROM Animal WHERE Type = %s AND Place = %s', (type, exhibit))
+        fetch = cur.fetchall()
+        table = AnimalTable([Animal(name, sp, t, age, ex) for name, sp, t, age, ex in fetch])
+        return render_template('staff_search_animal.html', form=form, table=table)
+    return render_template('staff_search_animal.html', form=form, table=table)
 
 
+@app.route("/staff_animal_care", methods=['GET', 'POST'])
+@login_required
+def staff_animal_care():
+    # todo: link col
+    return render_template('staff_animal_care.html.html')
 
 
+@app.route("/admin", methods=['GET', 'POST'])
+@login_required
+def admin():
+    return render_template('admin.html')
 
 
+## admin stuff
+@login_required
+@app.route("/admin_view_staff", methods=['GET', 'POST'])
+def admin_view_staff():
+    cur = db.get_db().cursor()
+    cur.execute('SELECT * FROM User WHERE Username in (select * from Staff)')
+    fetch = cur.fetchall()
+    table = UsersTable([User_info(u, e) for u, e, _ in fetch])
+    form = RemoveForm()
+    return render_template("admin_view_staff.html", table=table, form=form)
+
+
+@login_required
+@app.route("/admin_view_visitor", methods=['GET', 'POST'])
+def admin_view_visitor():
+    cur = db.get_db().cursor()
+    cur.execute('SELECT * FROM User WHERE Username in (select * from Visitor)')
+    fetch = cur.fetchall()
+    table = UsersTable([User_info(u, e) for u, e, _ in fetch])
+    form = RemoveForm()
+    return render_template("admin_view_visitor.html", table=table, form=form)
+
+
+@login_required
+@app.route("/admin_view_show", methods=['GET', 'POST'])
+def admin_view_show():
+    table = UsersTable([])
+    form = AdminRemoveShowsForm()
+    if form.is_submitted():
+        print(form.search.data, form.remove.data)
+        if form.search.data:
+            flash('SEARCH')
+            return redirect(url_for('admin'))
+        elif form.remove.data:
+            flash('REMOVE')
+            return redirect(url_for('admin'))
+    return render_template("admin_view_show.html", table=table, form=form)
+
+
+@login_required
+@app.route("/admin_view_animal", methods=['GET', 'POST'])
+def admin_view_animal():
+    search_animal = SearchAnimalForm()
+    table = AnimalTable([])
+    if search_animal.is_submitted():
+        return redirect(url_for('admin'))
+    return render_template("admin_view_animal.html", form=search_animal, table=table)
+
+
+@login_required
+@app.route("/admin_add_animal", methods=['GET', 'POST'])
+def admin_add_animal():
+    animal_form = AddAnimalForm()
+    if animal_form.is_submitted():
+        # flash('HAHAHA')
+        # todo: age change
+        # todo: add animal to database
+        return redirect(url_for('admin'))
+    return render_template("admin_add_animal.html", form=animal_form)
+
+
+@login_required
+@app.route("/admin_add_show", methods=['GET', 'POST'])
+def admin_add_show():
+    show_form = AddShowForm()
+    if show_form.is_submitted():
+        # flash('HAHAHA')
+        # todo: add show to database
+        return redirect(url_for('admin'))
+    return render_template("admin_add_show.html", form=show_form)

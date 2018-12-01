@@ -3,7 +3,7 @@
 <article class="center">
     <h1 class="main_title" style="font-size:300%;">Welcome Atlanta Zoo System</h1>
     <br>
-    <p>Hello {{current_user.username}} you are logged in</p>
+    <p>Hello {{current_user.username}} you are logged in as {{ current_user.usertype }}</p>
     <br>
     <a href="{{url_for('logout')}}"><button type="button">Log Out</button></a>
     <br>
