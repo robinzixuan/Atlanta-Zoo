@@ -97,15 +97,19 @@ th
 <h1>Atlanta Zoo</h1>
 <h1>View Staff</h1>
 </div>
-
-<div id="nav">
-    {{table}}
 <form action="" method="POST">
-  <div class="input">
-    {{form.submit}}
-  </div>
+<div class="select">
+            {{ form.by }}
+        </div>
+        <div class="select">
+            {{ form.direction }}
+        </div>
 
 </form>
+<div id="nav">
+
+    {{table}}
+
 
 </div>
     <a href="{{url_for('admin')}}"><button type="button">Back</button></a>

@@ -106,8 +106,17 @@ th
   {{form.exhibit.label}}: {{form.exhibit.data}}
   {{form.type.label}}: {{form.type.data}}
   <div class="input" type="text" id="txt">
-    {{form.notes}}
+    Notes: {{form.notes}}
   </div>
+  <div class="input">
+            {{ form.sort }}
+</div>
+<div class="select">
+            {{ form.by }}
+</div>
+<div class="select">
+            {{ form.direction }}
+</div>
    <div class="input">
                 {{ form.log_notes }}
             </div>

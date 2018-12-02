@@ -121,7 +121,7 @@ class AnimalCare:
     def __init__(self, name, time, note):
         self.name = name
         self.note = note
-        self.time = time
+        self.time = str(time)
 
 
 class Show:

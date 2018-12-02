@@ -109,16 +109,21 @@ th
     {{form.date}}
   </div>
   {{form.exhibit.label}}
-  <div class="select">
-    {{form.exhibit}}
-  </div>
-  <div class = "input">
-       {{ form.search }}
-     </div>
-    {{table}}
-    <div class = "input">
-       {{ form.remove }}
-     </div>
+    <div class="select">
+            {{ form.type }}
+        </div>
+        <div class="input">
+            {{ form.sort }}
+        </div>
+        <div class="select">
+            {{ form.by }}
+        </div>
+        <div class="select">
+            {{ form.direction }}
+        </div>
+        <div class="input">
+            {{ form.search }}
+        </div>
 </form>
     <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
 

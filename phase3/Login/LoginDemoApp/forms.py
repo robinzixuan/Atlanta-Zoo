@@ -60,7 +60,20 @@ class SearchShowHistoryForm(FlaskForm):
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
     date = DateTimeField('Datetime', format='%Y-%m-%d %H:%M:%S')
     search = SubmitField('Search Show')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Name", "Name"),("Time", "Time"),("Exhibit", "Exhibit")])
 
+
+class AdminViewVisitorForm(FlaskForm):
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC", "ASC"), ("DESC", "DESC")])
+    by = SelectField('By', choices=[("Username", "Username"), ("Email", "Email")])
+
+class AdminViewStaffForm(FlaskForm):
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC", "ASC"), ("DESC", "DESC")])
+    by = SelectField('By', choices=[("Username", "Username"), ("Email", "Email")])
 
 
 class SearchExhibitsHistoryForm(FlaskForm):
@@ -69,6 +82,9 @@ class SearchExhibitsHistoryForm(FlaskForm):
     visit_num_max = StringField('Max')
     date = DateField('Time', format ='%m/%d/%Y')
     search = SubmitField('Search')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Name", "Name"), ("Time", "Time"), ("Number of Visits", "Number of Visits")])
 
 
 class SearchAnimalForm(FlaskForm):
@@ -94,6 +110,10 @@ class AdminSearchAnimalForm(FlaskForm):
     type = SelectField('Type', choices=type_choices)
     search = SubmitField('Search')
     remove = SubmitField('Remove')
+    sort = SubmitField('OrderBy')
+    by = SelectField('By', choices=[("Name", "Name"), ("Species", "Species"), ("Age", "Age"),
+                                    ("Exhibit", "Exhibit"), ("Type", "Type")])
+
 
 
 class AddAnimalForm(FlaskForm):
@@ -105,10 +125,10 @@ class AddAnimalForm(FlaskForm):
     submit = SubmitField('Add animal')
 
 
+
+
 class RemoveForm(FlaskForm):
     remove = SubmitField('Remove')
-
-
 
 
 class AddShowForm(FlaskForm):
@@ -118,8 +138,6 @@ class AddShowForm(FlaskForm):
     date = DateTimeField('Datetime', format='%Y-%m-%d %H:%M:%S')
     submit = SubmitField('Add Show')
     staff = SelectField('Staff', choices = [])
-    # def __init__(self, staff):
-    #     pass
 
 
 class StaffSearchShowsForm(FlaskForm):
@@ -142,6 +160,9 @@ class AdminRemoveShowsForm(FlaskForm):
     date = DateField('Date', format='%m/%d/%Y')
     remove = SubmitField('Remove Show')
     search = SubmitField('Search Show')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC", "ASC"), ("DESC", "DESC")])
+    by = SelectField('By', choices=[("Name", "Name"), ("DateAndTime", "DateAndTime"), ("LocateAt", "LocateAt")])
 
 
 class ExhibitDetail(FlaskForm):
@@ -174,5 +195,5 @@ class AnimalCareForm(FlaskForm):
     log_notes = SubmitField('Log Notes')
     sort = SubmitField('OrderBy')
     direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
-    by = SelectField('By', choices=[("Staff Member", "Hostby"),("Note", "notes"), ("Time", "Date")])
+    by = SelectField('By', choices=[("Username", "Staff"),("Texts", "notes"), ("Times", "Date")])
 
