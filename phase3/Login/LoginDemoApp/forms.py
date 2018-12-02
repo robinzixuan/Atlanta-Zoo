@@ -51,6 +51,8 @@ class SearchExhibitsForm(FlaskForm):
     water_feature = SelectField('Water Feature', choices=[('Yes', 'Yes'), ('No', 'No')])
     size_min = StringField('Min')
     size_max = StringField('Max')
+    sort = SubmitField('OrderBy')
+    by = SelectField('By', choices=[("Name", "Name"),("Size", "Size"),("NumAnimals", "NumAnimals"),("is_water", "is_water")])
 
 
 class SearchShowHistoryForm(FlaskForm):
@@ -77,6 +79,9 @@ class SearchAnimalForm(FlaskForm):
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
     type = SelectField('Type', choices=type_choices)
     search = SubmitField('Search')
+    sort = SubmitField('OrderBy')
+    by = SelectField('By', choices=[("Name", "Name"), ("Species", "Species"), ("Age", "Age"),
+                                    ("Exhibit", "Exhibit"),("Type", "Type")])
 
 
 class AdminSearchAnimalForm(FlaskForm):

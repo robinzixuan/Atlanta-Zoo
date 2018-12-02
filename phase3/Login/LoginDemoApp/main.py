@@ -1,6 +1,6 @@
 from LoginDemoApp import app, db, bcrypt, serializer
 from LoginDemoApp.database_tables import load_user, User
-from flask import render_template, url_for, flash, Markup, redirect, request
+from flask import render_template, url_for, flash, Markup, redirect, request, make_response
 from flask_login import login_user, current_user, logout_user, login_required
 from pymysql.err import IntegrityError
 from LoginDemoApp.table import *
@@ -209,28 +209,59 @@ def visitor_search_exhibit():
 def visitor_search_animal():
     form = SearchAnimalForm()
     if form.is_submitted():
-        name = form.name.data
-        species = form.species.data
-        age_min = form.age_min.data
-        age_max = form.age_max.data
-        exhibit = form.exhibit.data
-        type = form.type.data
-        query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
-        if name:
-            query.append('Name = "%s"' % name)
-        if species:
-            query.append('Species = "%s"' % species)
-        if age_min:
-            query.append('Age >= "%s"' % age_min)
-        if age_max:
-            query.append('Age <= "%s"' % age_max)
-        query = " AND ".join(query)
-        cur = db.get_db().cursor()
-        cur.execute(query)
-        fetch = cur.fetchall()
-        print(fetch)
-        table = AnimalTable([Animal(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
-        return render_template('visitor_search_animal.html', form=form, table=table)
+        if form.sort.data:
+            if request.cookies.get("animal_name"):
+                form.name.data = request.cookies.get("animal_name")
+            if request.cookies.get("animal_species"):
+                form.species.data = request.cookies.get("animal_species")
+            name = form.name.data
+            species = form.species.data
+            age_min = form.age_min.data
+            age_max = form.age_max.data
+            exhibit = form.exhibit.data
+            type = form.type.data
+            query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
+            if name:
+                query.append('Name = "%s"' % name)
+            if species:
+                query.append('Species = "%s"' % species)
+            if age_min:
+                query.append('Age >= "%s"' % age_min)
+            if age_max:
+                query.append('Age <= "%s"' % age_max)
+            query = " AND ".join(query)
+            query += "ORDER BY Age ASC"
+            cur = db.get_db().cursor()
+            cur.execute(query)
+            fetch = cur.fetchall()
+            table = AnimalTable([Animal(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
+            res = make_response(render_template('visitor_search_animal.html', form=form, table=table))
+            return res
+        elif form.search.data:
+            name = form.name.data
+            species = form.species.data
+            age_min = form.age_min.data
+            age_max = form.age_max.data
+            exhibit = form.exhibit.data
+            type = form.type.data
+            query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
+            if name:
+                query.append('Name = "%s"' % name)
+            if species:
+                query.append('Species = "%s"' % species)
+            if age_min:
+                query.append('Age >= "%s"' % age_min)
+            if age_max:
+                query.append('Age <= "%s"' % age_max)
+            query = " AND ".join(query)
+            cur = db.get_db().cursor()
+            cur.execute(query)
+            fetch = cur.fetchall()
+            table = AnimalTable([Animal(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
+            res = make_response(render_template('visitor_search_animal.html', form=form, table=table))
+            res.set_cookie("animal_name", name)
+            res.set_cookie("animal_species", species)
+            return res
     return render_template("visitor_search_animal.html", form=form)
 
 
