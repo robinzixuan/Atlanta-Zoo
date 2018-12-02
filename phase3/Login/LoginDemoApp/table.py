@@ -67,17 +67,17 @@ class ShowsTable1(Table):
 
 
 class ExhibitHistoryTable(Table):
-    Name = Col('Name')
+    name = Col('Name')
     visit = Col("Number of Visits")
     time = Col('Time')
     choose = LinkCol('Select', 'exhibit_detail', url_kwargs=dict(id='name'))
 
 
-class ExihibitHistory:
+class ExhibitHistory:
     def __init__(self, name, time, visit):
         self.name = name
         self.visit = visit
-        self.time = time
+        self.time = str(time)
 
 
 class ShowHistoryTable(Table):
@@ -127,7 +127,7 @@ class AnimalCare:
 class Show:
     def __init__(self, name, time, exhibit):
         self.name = name
-        self.time = time
+        self.time = str(time)
         self.exhibit = exhibit
 
 

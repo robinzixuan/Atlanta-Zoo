@@ -7,6 +7,7 @@ from LoginDemoApp.table import *
 import hashlib
 import datetime
 
+
 @app.route("/")
 @app.route("/home")
 def home():
@@ -185,6 +186,7 @@ def visitor():
     return render_template('visitor.html')
 
 
+# sort sql query error
 @app.route("/visitor_search_exhibit", methods=['GET', 'POST'])
 @login_required
 def visitor_search_exhibit():
@@ -192,30 +194,38 @@ def visitor_search_exhibit():
     table = ExhibitsTable([])
     if form.is_submitted():
         if form.sort.data:
-            name = request.cookies.get("visitor_search_exhibit_name") if request.cookies.get("visitor_search_exhibit_name") else None
-            size_min = request.cookies.get("visitor_search_exhibit_size_min") if request.cookies.get("visitor_search_exhibit_size_min") else None
-            size_max = request.cookies.get("visitor_search_exhibit_size_max") if request.cookies.get("visitor_search_exhibit_size_max") else None
-            animal_min = request.cookies.get("visitor_search_exhibit_animal_min") if request.cookies.get("visitor_search_exhibit_animal_min") else None
-            animal_max = request.cookies.get("visitor_search_exhibit_animal_max") if request.cookies.get("visitor_search_exhibit_animal_max") else None
+            name = request.cookies.get("visitor_search_exhibit_name") if request.cookies.get(
+                "visitor_search_exhibit_name") else None
+            size_min = request.cookies.get("visitor_search_exhibit_size_min") if request.cookies.get(
+                "visitor_search_exhibit_size_min") else None
+            size_max = request.cookies.get("visitor_search_exhibit_size_max") if request.cookies.get(
+                "visitor_search_exhibit_size_max") else None
+            animal_min = request.cookies.get("visitor_search_exhibit_animal_min") if request.cookies.get(
+                "visitor_search_exhibit_animal_min") else None
+            animal_max = request.cookies.get("visitor_search_exhibit_animal_max") if request.cookies.get(
+                "visitor_search_exhibit_animal_max") else None
             water_feature = 1 if form.water_feature.data else 0
-            query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s"' %
-            (water_feature)]
+            query = [
+                'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s"' %
+                (water_feature)]
             if name:
                 query.append('Exhibit.Name = "%s"' % name)
             if size_min:
                 query.append('Exhibit.Size >= "%s"' % size_min)
             if size_max:
                 query.append('Exhibit.Size <= "%s"' % size_max)
-            if animal_min and animal_max:
-                query.append('GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' %(animal_max, animal_min))
             query = " AND ".join(query)
-            query += " ORDER BY %s %s" %(form.by.data, form.direction.data)
+            if animal_min and animal_max:
+                query += 'GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (
+                    animal_max, animal_min)
+            query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
             cur = db.get_db().cursor()
+            print(query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitsTable(
-            [Exhibit(name, size, num_animals, ("YES" if int(water) else "NO")) for name, size, num_animals, water in
-             fetch])
+                [Exhibit(name, size, num_animals, ("YES" if int(water) else "NO")) for name, size, num_animals, water in
+                 fetch])
             res = make_response(render_template('visitor_search_exhibit.html', form=form, table=table))
             return res
         elif form.search.data:
@@ -225,30 +235,33 @@ def visitor_search_exhibit():
             animal_min = form.animal_min.data
             animal_max = form.animal_max.data
             water_feature = 1 if form.water_feature.data else 0
-            query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s"' %
-            (water_feature)]
+            query = [
+                'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s"' %
+                (water_feature)]
             if name:
                 query.append('Exhibit.Name = "%s"' % name)
             if size_min:
                 query.append('Exhibit.Size >= "%s"' % size_min)
             if size_max:
                 query.append('Exhibit.Size <= "%s"' % size_max)
-            if animal_min and animal_max:
-                query.append('GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' %(animal_max, animal_min))
             query = " AND ".join(query)
+            if animal_min and animal_max:
+                query += 'GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (
+                animal_max, animal_min)
             cur = db.get_db().cursor()
+            print(query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitsTable(
-            [Exhibit(name, size, num_animals, ("YES" if int(water) else "NO")) for name, size, num_animals, water in
-             fetch])
+                [Exhibit(name, size, num_animals, ("YES" if int(water) else "NO")) for name, size, num_animals, water in
+                 fetch])
             res = make_response(render_template('visitor_search_exhibit.html', form=form, table=table))
             res.set_cookie("visitor_search_exhibit_name", name)
-            res.set_cookie("visitor_search_exhibit_size_min",size_min)
-            res.set_cookie("visitor_search_exhibit_size_max",size_max)
-            res.set_cookie("visitor_search_exhibit_animal_min",animal_min)
-            res.set_cookie("visitor_search_exhibit_animal_max",animal_min)
-            res.set_cookie("visitor_search_exhibit_water_feature",water_feature)
+            res.set_cookie("visitor_search_exhibit_size_min", size_min)
+            res.set_cookie("visitor_search_exhibit_size_max", size_max)
+            res.set_cookie("visitor_search_exhibit_animal_min", animal_min)
+            res.set_cookie("visitor_search_exhibit_animal_max", animal_min)
+            # res.set_cookie("visitor_search_exhibit_water_feature", water_feature)
             return res
     return render_template("visitor_search_exhibit.html", form=form)
 
@@ -260,11 +273,15 @@ def visitor_search_animal():
     form = SearchAnimalForm()
     if form.is_submitted():
         if form.sort.data:
-            name = request.cookies.get("visitor_search_animal_name") if request.cookies.get("visitor_search_animal_name") else None
-            species = request.cookies.get("visitor_search_animal_species") if request.cookies.get("visitor_search_animal_species") else None
+            name = request.cookies.get("visitor_search_animal_name") if request.cookies.get(
+                "visitor_search_animal_name") else None
+            species = request.cookies.get("visitor_search_animal_species") if request.cookies.get(
+                "visitor_search_animal_species") else None
 
-            age_min = request.cookies.get("visitor_search_animal_age_min") if request.cookies.get("visitor_search_animal_age_min") else None
-            age_max = request.cookies.get("visitor_search_animal_age_max") if request.cookies.get("visitor_search_animal_age_max") else None
+            age_min = request.cookies.get("visitor_search_animal_age_min") if request.cookies.get(
+                "visitor_search_animal_age_min") else None
+            age_max = request.cookies.get("visitor_search_animal_age_max") if request.cookies.get(
+                "visitor_search_animal_age_max") else None
             exhibit = form.exhibit.data
             type = form.type.data
             query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
@@ -317,15 +334,19 @@ def visitor_search_animal():
     return render_template("visitor_search_animal.html", form=form)
 
 
+# good
 @login_required
 @app.route("/visitor_search_show", methods=['GET', 'POST'])
 def visitor_search_show():
     form = SearchShowsForm()
     if form.is_submitted():
         if form.sort.data:
-            name = request.cookies.get("visitor_search_shows_name") if request.cookies.get("visitor_search_shows_name") else None
-            exhibit = request.cookies.get("visitor_search_shows_exhibit") if request.cookies.get("visitor_search_shows_exhibit") else None
-            date = request.cookies.get("visitor_search_shows_date") if request.cookies.get("visitor_search_shows_date") else None
+            name = request.cookies.get("visitor_search_shows_name") if request.cookies.get(
+                "visitor_search_shows_name") else None
+            exhibit = request.cookies.get("visitor_search_shows_exhibit") if request.cookies.get(
+                "visitor_search_shows_exhibit") else None
+            date = request.cookies.get("visitor_search_shows_date") if request.cookies.get(
+                "visitor_search_shows_date") else None
             query = ['SELECT * FROM Shows WHERE LocateAt = "%s"' % exhibit]
             if name:
                 query.append('Name = "%s"' % name)
@@ -334,6 +355,7 @@ def visitor_search_show():
             query = " AND ".join(query)
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
             cur = db.get_db().cursor()
+            # print(query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ShowsTable1([Show1(name, str(date), ex) for name, date, ex, _ in fetch])
@@ -354,59 +376,76 @@ def visitor_search_show():
             fetch = cur.fetchall()
             table = ShowsTable1([Show1(name, str(date), ex) for name, date, ex, _ in fetch])
             res = make_response(render_template('visitor_search_show.html', form=form, table=table))
-            res.set_cookie("visitor_search_shows_name", name)
+            if name != "":
+                res.set_cookie("visitor_search_shows_name", name)
             res.set_cookie("visitor_search_shows_exhibit", exhibit)
-            res.set_cookie("visitor_search_shows_date", date)
+            if date:
+                res.set_cookie("visitor_search_shows_date", date)
             return res
     return render_template("visitor_search_show.html", form=form)
 
 
+# sql error
+# date could be none type
 @login_required
 @app.route("/visitor_exhibit_history", methods=['GET', 'POST'])
 def visitor_exhibit_history():
     form = SearchExhibitsHistoryForm()
-    table = ExhibitsTable([])
     if form.is_submitted():
         if form.sort.data:
-            name = request.cookies.get("visitor_exhibit_history_name") if request.cookies.get("visitor_exhibit_history_name") else None
-            date = request.cookies.get("visitor_exhibit_history_date") if request.cookies.get("visitor_exhibit_history_date") else None
-            visit_num_max = request.cookies.get("visitor_exhibit_history_visit_num_max") if request.cookies.get("visitor_exhibit_history_visit_num_max") else None
-            visit_num_min = request.cookies.get("visitor_exhibit_history_visit_num_min") if request.cookies.get("visitor_exhibit_history_visit_num_min") else None
-            query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s"' % date]
+            name = request.cookies.get("visitor_exhibit_history_name") if request.cookies.get(
+                "visitor_exhibit_history_name") else None
+            date = request.cookies.get("visitor_exhibit_history_date") if request.cookies.get(
+                "visitor_exhibit_history_date") else None
+            visit_num_max = request.cookies.get("visitor_exhibit_history_visit_num_max") if request.cookies.get(
+                "visitor_exhibit_history_visit_num_max") else None
+            visit_num_min = request.cookies.get("visitor_exhibit_history_visit_num_min") if request.cookies.get(
+                "visitor_exhibit_history_visit_num_min") else None
+            query = [
+                'SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s"' % date]
             if name:
                 query.append('Name = "%s"' % name)
             if visit_num_min and visit_num_max:
-                query.append('GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (visit_num_max, visit_num_min))
+                query.append('GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (
+                    visit_num_max, visit_num_min))
             query = " AND ".join(query)
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
-            cur = db.get_db().cursor()
-            cur.execute()
-            fetch = cur.fetchall()
-            table = ExhibitHistoryTable(
-                [ExhibitHistoryTable(name, time, num_of_visits) for name, time, num_of_visits in fetch])
-            res = make_response(render_template('visitor_exhibit_history.html', form=form, table=table))
-            return res
-        elif form.sort.search:
-            name = form.name.data
-            date = date = form.date.data
-            visit_num_max = form.visit_num_max.data
-            visit_num_min = form.visit_num_min.data
-            query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s"' % date]
-            if name:
-                query.append('Name = "%s"' % name)
-            if visit_num_min and visit_num_max:
-                query.append('GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (visit_num_max, visit_num_min))
-            query = " AND ".join(query)
+            print(query)
             cur = db.get_db().cursor()
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitHistoryTable(
-                [ExhibitHistoryTable(name, time, num_of_visits) for name, time, num_of_visits in fetch])
+                [ExhibitHistory(name, time, num_of_visits) for name, time, num_of_visits in fetch])
             res = make_response(render_template('visitor_exhibit_history.html', form=form, table=table))
-            res.set_cookie("visitor_exhibit_history_name", name)
-            res.set_cookie("visitor_exhibit_history_date", date)
-            res.set_cookie("visitor_exhibit_history_visit_num_max", visit_num_max)
-            res.set_cookie("visitor_exhibit_history_visit_num_min", visit_num_min)
+            return res
+        elif form.search.data:
+            name = form.name.data
+            date = date = form.date.data
+            visit_num_max = form.visit_num_max.data
+            visit_num_min = form.visit_num_min.data
+            query = [
+                'SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s"' % date]
+            if name:
+                query.append('Name = "%s"' % name)
+            query = " AND ".join(query)
+            if visit_num_min and visit_num_max:
+                query += 'GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (
+                visit_num_max, visit_num_min)
+            cur = db.get_db().cursor()
+            print(query)
+            cur.execute(query)
+            fetch = cur.fetchall()
+            table = ExhibitHistoryTable(
+                [ExhibitHistory(name, time, num_of_visits) for name, time, num_of_visits in fetch])
+            res = make_response(render_template('visitor_exhibit_history.html', form=form, table=table))
+            if name != "":
+                res.set_cookie("visitor_exhibit_history_name", name)
+            if date:
+                res.set_cookie("visitor_exhibit_history_date", date)
+            if visit_num_max != "":
+                res.set_cookie("visitor_exhibit_history_visit_num_min", visit_num_min)
+            if visit_num_min != "":
+                res.set_cookie("visitor_exhibit_history_visit_num_max", visit_num_max)
             return res
     return render_template("visitor_exhibit_history.html", form=form)
 
@@ -415,13 +454,15 @@ def visitor_exhibit_history():
 @app.route("/visitor_show_history", methods=['GET', 'POST'])
 def visitor_show_history():
     form = SearchShowsForm()
-    table = ShowsTable([])
     if form.is_submitted():
         if form.sort.data:
-            name = request.cookies.get("visitor_show_history_name") if request.cookies.get("visitor_show_history_name") else None
-            time = request.cookies.get("visitor_show_history_time") if request.cookies.get("visitor_show_history_time") else None
-            exhibit = request.cookies.get("visitor_show_history_exhibit") if request.cookies.get("visitor_show_history_exhibit") else None
-            query = ['SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE VisitShow.Showname = "%s"' % name]
+            name = request.cookies.get("visitor_show_history_name") if request.cookies.get(
+                "visitor_show_history_name") else None
+            time = request.cookies.get("visitor_show_history_time") if request.cookies.get(
+                "visitor_show_history_time") else None
+            exhibit = request.cookies.get("visitor_show_history_exhibit")
+            query = [
+                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE VisitShow.Showname = "%s"' % name]
             if time:
                 query.append('VisitShow.Showname = Shows.Name')
             if exhibit:
@@ -429,7 +470,7 @@ def visitor_show_history():
             query = " AND ".join(query)
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
             cur = db.get_db().cursor()
-            cur.execute()
+            cur.execute(query)
             fetch = cur.fetchall()
             table = ShowHistoryTable([ShowHistory(name, time, exhibit) for name, time, exhibit in fetch])
             res = make_response(render_template('visitor_show_history.html', form=form, table=table))
@@ -438,23 +479,25 @@ def visitor_show_history():
             name = form.name.data
             time = form.date.data
             exhibit = form.exhibit.data
-            query = ['SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE VisitShow.Showname = "%s"' % name]
+            query = [
+                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE VisitShow.Showname = "%s"' % name]
             if time:
                 query.append('VisitShow.Showname = Shows.Name')
             if exhibit:
                 query.append('Shows.LocateAt = "%s"' % exhibit)
             query = " AND ".join(query)
             cur = db.get_db().cursor()
-            cur.execute()
+            cur.execute(query)
             fetch = cur.fetchall()
             table = ShowHistoryTable([ShowHistory(name, time, exhibit) for name, time, exhibit in fetch])
             res = make_response(render_template('visitor_show_history.html', form=form, table=table))
-            res.set_cookie("visitor_show_history_name", name)
-            res.set_cookie("visitor_show_history_date", time)
+            if name != "":
+                res.set_cookie("visitor_show_history_name", name)
+            if time:
+                res.set_cookie("visitor_show_history_date", time)
             res.set_cookie("visitor_show_history_exhibit", exhibit)
             return res
     return render_template("visitor_show_history.html", form=form)
-
 
 
 ### staff stuff
@@ -464,14 +507,15 @@ def staff():
     # print(type(current_user), dir(current_user))
     return render_template('staff.html')
 
+
 # cookie good
 @app.route("/staff_view_shows", methods=['GET', 'POST'])
 @login_required
 def staff_view_shows():
-    form=StaffSearchShowsForm()
+    form = StaffSearchShowsForm()
     if form.is_submitted():
-        by=form.by.data
-        direction=form.direction.data
+        by = form.by.data
+        direction = form.direction.data
         query = 'SELECT * FROM Shows WHERE Hostby = "%s"' % current_user.username
         query += " ORDER BY %s %s " % (by, direction)
     else:
@@ -481,6 +525,7 @@ def staff_view_shows():
     fetch = cur.fetchall()
     table = ShowsTable1([Show1(n, d, e) for n, d, e, _ in fetch])
     return render_template('staff_view_shows.html', form=form, table=table)
+
 
 # cookie good
 @app.route("/staff_search_animal", methods=['GET', 'POST'])
@@ -500,8 +545,8 @@ def staff_search_animal():
             age_max = form.age_max.data
             exhibit = form.exhibit.data
             type = form.type.data
-            by=form.by.data
-            direction=form.direction.data
+            by = form.by.data
+            direction = form.direction.data
             query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
             if name:
                 query.append('Name = "%s"' % name)
@@ -547,12 +592,13 @@ def staff_search_animal():
         return render_template('staff_search_animal.html', form=form, table=table)
     return render_template('staff_search_animal.html', form=form, table=table)
 
+
 # good
 @app.route("/staff_animal_care/<string:name>/<string:species>", methods=['GET', 'POST'])
 @login_required
 def staff_animal_care(name, species):
     form = AnimalCareForm()
-    table=AnimalCareTable([])
+    table = AnimalCareTable([])
     cur = db.get_db().cursor()
     cur.execute("SELECT * FROM Animal WHERE Name = %s AND Species = %s", (name, species))
     fetch = cur.fetchone()
@@ -581,7 +627,8 @@ def staff_animal_care(name, species):
             note = form.notes.data
             time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             try:
-                cur.execute('INSERT INTO Note VALUES(%s, %s, %s, %s, %s)', (current_user.username, name, species, time, note))
+                cur.execute('INSERT INTO Note VALUES(%s, %s, %s, %s, %s)',
+                            (current_user.username, name, species, time, note))
                 flash("Add Note successful")
                 print("successful")
             except IntegrityError as e:
@@ -594,7 +641,7 @@ def staff_animal_care(name, species):
     cur.execute("SELECT * FROM Note WHERE AnimalName = %s AND AnimalSpecies = %s", (name, species))
     fetch = cur.fetchall()
     print(fetch)
-    table = AnimalCareTable([AnimalCare(staff,  time, note) for staff, _, _, time, note in fetch])
+    table = AnimalCareTable([AnimalCare(staff, time, note) for staff, _, _, time, note in fetch])
     return render_template('staff_animal_care.html', form=form, table=table)
 
 
@@ -604,40 +651,34 @@ def admin():
     return render_template('admin.html')
 
 
-## admin stuff
+# good
 @login_required
 @app.route("/admin_view_staff", methods=['GET', 'POST'])
 def admin_view_staff():
-    table = StaffsTable([])
     form = AdminViewStaffForm()
     cur = db.get_db().cursor()
+    query = 'SELECT * FROM User WHERE Username in (select * from Staff)'
     if form.is_submitted():
-        if form.sort.data:
-            query = ['SELECT * FROM User WHERE Username in (select * from Staff)']
-            query = " AND ".join(query)
-            query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
-            fetch = cur.fetchall()
-            table = StaffsTable([Visitors(u, e) for u, e, _ in fetch])
-            res = make_response(render_template("admin_view_staff.html", table=table, form=form))
-            return res
+        query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
+    cur.execute(query)
+    fetch = cur.fetchall()
+    table = StaffsTable([Staffs(u, e) for u, e, _ in fetch])
     return render_template("admin_view_staff.html", table=table, form=form)
 
 
+# good
 @login_required
 @app.route("/admin_view_visitor", methods=['GET', 'POST'])
 def admin_view_visitor():
-    table = VisitorsTable([])
     form = AdminViewVisitorForm()
     cur = db.get_db().cursor()
+    query = 'SELECT * FROM User WHERE Username in (select * from Visitor)'
     if form.is_submitted():
         if form.sort.data:
-            query = ['SELECT * FROM User WHERE Username in (select * from Visitor)']
-            query = " AND ".join(query)
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
-            fetch = cur.fetchall()
-            table = VisitorsTable([Visitors(u, e) for u, e, _ in fetch])
-            res = make_response(render_template("admin_view_visitor.html", table=table, form=form))
-            return res
+    cur.execute(query)
+    fetch = cur.fetchall()
+    table = VisitorsTable([Visitors(u, e) for u, e, _ in fetch])
     return render_template("admin_view_visitor.html", table=table, form=form)
 
 
@@ -649,12 +690,9 @@ def admin_view_show():
     cur = db.get_db().cursor()
     if form.is_submitted():
         if form.sort.data:
-            # print(form.search.data, form.remove.data)
             name = request.cookies.get("admin_view_show_name") if request.cookies.get("admin_view_show_name") else None
-            exhibit = form.exhibit.data
             date = request.cookies.get("admin_view_show_date") if request.cookies.get("admin_view_show_date") else None
-            print(name, type(name), len(name))
-
+            exhibit = form.exhibit.data
             query = ['SELECT Name, DateAndTime, LocateAt FROM Shows WHERE LocateAt = "%s"' % exhibit]
             if name:
                 query.append('Name = "%s"' % name)
@@ -662,14 +700,9 @@ def admin_view_show():
                 query.append('DateAndTime = "%s"' % date)
             query = " AND ".join(query)
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
-            print(query)
-            cur = db.get_db().cursor()
             cur.execute(query)
             fetch = cur.fetchall()
             table = ShowsTable([Show(a, b, c) for a, b, c in fetch])
-            res = make_response(render_template('admin_view_show.html', form=form, table=table))
-            return res
-
         elif form.search.data:
             name = form.name.data
             exhibit = form.exhibit.data
@@ -680,16 +713,14 @@ def admin_view_show():
             if date:
                 query.append('DateAndTime = "%s"' % date)
             query = " AND ".join(query)
-            query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
-            print(query)
-            cur = db.get_db().cursor()
             cur.execute(query)
             fetch = cur.fetchall()
             table = ShowsTable([Show(a, b, c) for a, b, c in fetch])
             res = make_response(render_template('admin_view_show.html', form=form, table=table))
-            res.set_cookie("admin_view_show_name", name)
-            res.set_cookie("admin_view_show_date", date)
-            res.set_cookie("admin_view_show_exhibit", exhibit)
+            if name != "":
+                res.set_cookie("admin_view_show_name", name)
+            if date:
+                res.set_cookie("admin_view_show_date", date)
             return res
     return render_template("admin_view_show.html", table=table, form=form)
 
@@ -702,11 +733,15 @@ def admin_view_animal():
     if form.is_submitted():
         print(form.search.data)
         if form.sort.data:
-            name = request.cookies.get("admin_view_animal_name") if request.cookies.get("admin_view_animal_name") else None
-            species = request.cookies.get("admin_view_animal_species") if request.cookies.get("admin_view_animal_species") else None
+            name = request.cookies.get("admin_view_animal_name") if request.cookies.get(
+                "admin_view_animal_name") else None
+            species = request.cookies.get("admin_view_animal_species") if request.cookies.get(
+                "admin_view_animal_species") else None
 
-            age_min = request.cookies.get("admin_view_animal_age_min") if request.cookies.get("admin_view_animal_age_min") else None
-            age_max = request.cookies.get("admin_view_animal_age_max") if request.cookies.get("admin_view_animal_age_max") else None
+            age_min = request.cookies.get("admin_view_animal_age_min") if request.cookies.get(
+                "admin_view_animal_age_min") else None
+            age_max = request.cookies.get("admin_view_animal_age_max") if request.cookies.get(
+                "admin_view_animal_age_max") else None
             exhibit = form.exhibit.data
             type = form.type.data
             query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
@@ -802,17 +837,19 @@ def admin_add_show():
 @login_required
 @app.route("/showdelete/<string:id>/<string:id1>", methods=['GET', 'POST'])
 def showdelete(id, id1):
-     cur = db.get_db().cursor()
-     cur.execute('Delete FROM Shows where Name=%s and DateAndTime=%s',(id, id1))
-     # flash("Delete successful")
-     return redirect(url_for("admin_view_show"))
+    cur = db.get_db().cursor()
+    cur.execute('Delete FROM Shows where Name=%s and DateAndTime=%s', (id, id1))
+    # flash("Delete successful")
+    return redirect(url_for("admin_view_show"))
+
 
 @login_required
 @app.route("/delete_animal/<string:id>/<string:id1>", methods=['GET', 'POST'])
-def delete_animal(id,id1):
-     cur = db.get_db().cursor()
-     cur.execute('Delete FROM Animal where Name=%s and Species=%s', (id, id1))
-     return redirect(url_for("admin_view_animal"))
+def delete_animal(id, id1):
+    cur = db.get_db().cursor()
+    cur.execute('Delete FROM Animal where Name=%s and Species=%s', (id, id1))
+    return redirect(url_for("admin_view_animal"))
+
 
 @login_required
 @app.route("/visitordelete/<string:id>", methods=['GET', 'POST'])
@@ -821,6 +858,7 @@ def visitordelete(id):
     cur.execute('Delete FROM Visitor where Username=%s', id)
     cur.execute('Delete FROM User where Username=%s', id)
     return redirect(url_for('admin_view_visitor'))
+
 
 @login_required
 @app.route("/staffdelete/<string:id>", methods=['GET', 'POST'])

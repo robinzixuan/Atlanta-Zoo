@@ -52,6 +52,7 @@ class SearchExhibitsForm(FlaskForm):
     size_min = StringField('Min')
     size_max = StringField('Max')
     sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
     by = SelectField('By', choices=[("Name", "Name"),("Size", "Size"),("NumAnimals", "NumAnimals"),("is_water", "is_water")])
 
 
@@ -152,17 +153,20 @@ class SearchShowsForm(FlaskForm):
     date = DateTimeField('Date', format='%Y-%m-%d %H:%M:%S')
     search = SubmitField('Search')
     log_visit = SubmitField('Log Visit')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Name", "Name"), ("Exhibit", "Exhibit"), ("DateAndTime", "Time")])
 
 
 class AdminRemoveShowsForm(FlaskForm):
     name = StringField('Name')
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
-    date = DateField('Date', format='%m/%d/%Y')
+    date = DateField('Date', format='%Y-%m-%d %H:%M:%S')
     remove = SubmitField('Remove Show')
     search = SubmitField('Search Show')
     sort = SubmitField('OrderBy')
     direction = SelectField('Direction', choices=[("ASC", "ASC"), ("DESC", "DESC")])
-    by = SelectField('By', choices=[("Name", "Name"), ("DateAndTime", "DateAndTime"), ("LocateAt", "LocateAt")])
+    by = SelectField('By', choices=[("Name", "Name"), ("DateAndTime", "DateAndTime"), ("LocateAt", "Exhibit")])
 
 
 class ExhibitDetail(FlaskForm):

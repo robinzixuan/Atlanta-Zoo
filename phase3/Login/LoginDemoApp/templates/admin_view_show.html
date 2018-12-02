@@ -110,6 +110,9 @@ th
   </div>
   {{form.exhibit.label}}
     <div class="select">
+            {{ form.exhibit }}
+        </div>
+    <div class="select">
             {{ form.type }}
         </div>
         <div class="input">
@@ -125,6 +128,7 @@ th
             {{ form.search }}
         </div>
 </form>
+    {{ table }}
     <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
 
 
