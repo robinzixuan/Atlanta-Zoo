@@ -97,6 +97,8 @@ th
         var a=txt.value;
         a++;
         txt.value=a;
+        document.form.#visit_num_max = a;
+        {#v_n_m.value ++;#}
     }
     function sub(){
         var txt=document.getElementById("txt");
@@ -104,8 +106,10 @@ th
         if(a>1){
             a--;
             txt.value=a;
+            document.form.visit_num_max = a;
         }else{
             txt.value=1;
+            document.form.visit_num_max = 1;
         }
     }
     function add2(){
@@ -172,9 +176,8 @@ app.controller('orderByCtrl', function($scope) {
   Number of Visits: <br>
   {{form.visit_num_max.label}}
   <input type="button" onclick="add()" value="+">
-  <div class="input" type="text" id="txt" value="1">
-    {{form.visit_num_max}}
-  </div>
+    <input type="text" id="txt" value="1">
+
 <input type="button" onclick="sub()" value="-"></td><br>
 {{form.visit_num_min.label}}
   <input type="button" onclick="add2()" value="+">
@@ -195,6 +198,7 @@ app.controller('orderByCtrl', function($scope) {
 {{table}}
 
 </div>
+    <a href="{{url_for('visitor')}}"><button type="button">Back</button></a>
 
 </body>
 </html>

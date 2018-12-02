@@ -5,10 +5,7 @@ from LoginDemoApp.table import *
 from flask import render_template, url_for, flash, Markup, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
 from itsdangerous import SignatureExpired, BadTimeSignature
-from pymysql.err import IntegrityError
-import hashlib
-from LoginDemoApp.table_1 import AnimalTable1, Animal1
-# import LoginDemoApp.forms as forms
+
 
 @app.route("/")
 @app.route("/home")
@@ -24,7 +21,6 @@ def sign_up():
         username = visitor_form.username.data.lower()
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
-        password = hashlib.sha1(password.encode()).hexdigest()
         cur = db.get_db().cursor()
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
         rv = cur.fetchone()
@@ -45,7 +41,6 @@ def sign_up():
         username = visitor_form.username.data.lower()
         email = visitor_form.email.data.lower()
         password = visitor_form.password.data
-        password = hashlib.sha1(password.encode()).hexdigest()
 
         cur = db.get_db().cursor()
 
@@ -81,22 +76,12 @@ def login():
         # Extract user inputs
         email = form.email.data.lower()
         password = form.password.data
-        password = hashlib.sha1(password.encode()).hexdigest()
-
         # print(email, password)
 
         # Search for user in database
         cur = db.get_db().cursor()
         cur.execute('SELECT * FROM User WHERE Email = "%s"' % email)
         fetch = cur.fetchone()
-
-        cur.execute('SELECT Username FROM Staff')
-
-        # print(forms.staff_choices)
-        staff_choices = [(i[0], i[0]) for i in cur.fetchall()]
-        # print(forms.staff_choices)
-        print(dir(AddShowForm))
-        AddShowForm.staff = SelectField('Staff', choices=staff_choices)
         if fetch:
             # print(fetch)
             u, e, p = fetch
@@ -169,11 +154,13 @@ def visitor_search_exhibit():
         animal_max = form.animal_max
         animal_min = form.animal_min
         water_feature = form.water_feature
+        # todo: age
+        # todo: name and species
         cur = db.get_db().cursor()
-        cur.execute('SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.Size <= %s AND Exhibit.Size >= %s AND Exhibit.WaterFeature = %s AND Animal.Place = Exhibit.Name GROUP BY Animal.Place HAVING COUNT(*) >= %s AND COUNT(*) <= %s', (size_max, size_min, water_feature, animal_max, animal_min) )
+        cur.execute('SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.Size <= int(%s) AND Exhibit.Size >= int(%s) AND Exhibit.WaterFeature = %s AND Animal.Place = Exhibit.Name GROUP BY Animal.Place HAVING COUNT(*) >= int(%s) AND COUNT(*) <= (%s)', (size_max, size_min, water_feature, animal_max, animal_min) )
         fetch = cur.fetchall()
         table = ExhibitsTable([ExhibitsTable(name, size, num_animals, water) for name, size, num_animals, water in fetch])
-        return render_template('visitor_search_exhibit.html', form=form, table=table)
+        return render_template('visitor_search_animal.html', form=form, table=table)
     return render_template("visitor_search_exhibit.html", form=form, table=table)
 
 
@@ -181,6 +168,7 @@ def visitor_search_exhibit():
 @app.route("/visitor_search_animal", methods=['GET', 'POST'])
 def visitor_search_animal():
     form = SearchAnimalForm()
+    table = AnimalTable([])
     if form.is_submitted():
         name =form.name.data
         species = form.species.data
@@ -189,17 +177,18 @@ def visitor_search_animal():
         exhibit = form.exhibit.data
         type = form.type.data
         cur = db.get_db().cursor()
-        cur.execute('SELECT * FROM Animal WHERE Type = %s AND Place = %s AND Age <= %s AND Age >= %s', (type, exhibit, age_min, age_max))
+        cur.execute('SELECT * FROM Animal WHERE Type = %s AND Place = %s AND Age <= int(%s) AND Age >= int(%s)', (type, exhibit, age_min, age_max))
         fetch = cur.fetchall()
         table = AnimalTable([Animal(name, sp, t, age, ex) for name, sp, t, age, ex in fetch])
         return render_template('visitor_search_animal.html', form=form, table=table)
-    return render_template("visitor_search_animal.html", form=form)
+    return render_template("visitor_search_animal.html", form=form, table=table)
 
 
 @login_required
 @app.route("/visitor_search_show", methods=['GET', 'POST'])
 def visitor_search_show():
     form = SearchShowsForm()
+    table = ShowsTable([]);
     if form.is_submitted():
         name = form.name.data
         exhibit = form.exhibit.data
@@ -209,25 +198,22 @@ def visitor_search_show():
         fetch = cur.fetchall()
         table = ShowsTable([ShowsTable(name, ex, date) for name, ex, date in fetch])
         return render_template('visitor_search_show.html', form=form, table=table)
-    return render_template("visitor_search_show.html", form=form)
+    return render_template("visitor_search_show.html", form=form, table = table)
 
 
 @login_required
 @app.route("/visitor_exhibit_history", methods=['GET', 'POST'])
 def visitor_exhibit_history():
     form = SearchExhibitsHistoryForm()
-    table = ExhibitsTable([])
+    table = ExhibitHistoryTable([])
     if form.is_submitted():
-        print(form.visit_num_max.data)
         name = form.name.data
-        date = form.date.data
+        time = form.date.data
         visit_num_max = form.visit_num_max.data
         visit_num_min = form.visit_num_min.data
-        print(visit_num_max)
-        print(visit_num_min)
-        cur = db.get_db().cursor()
-        cur.execute('SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = %s GROUP BY Exhibitname HAVING COUNT(*) <= %s AND COUNT(*) >= %s', (time, visit_num_max, visit_num_min))
-        fetch = cur.fetchall()
+
+        cur.execute()
+        fetch = cur.fetchall('SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = %s GROUP BY Exhibitname HAVING COUNT(*) <= int(%s) AND COUNT(*) >= int(%s)', (time, visit_num_max, visit_num_min))
         table = ExhibitHistoryTable([ExhibitHistoryTable(name, time, num_of_visits) for name, time, num_of_visits in fetch])
         return render_template('visitor_exhibit_history.html', form=form, table=table)
     return render_template("visitor_exhibit_history.html", form=form, table=table)
@@ -236,16 +222,16 @@ def visitor_exhibit_history():
 @login_required
 @app.route("/visitor_show_history", methods=['GET', 'POST'])
 def visitor_show_history():
-    form = SearchShowsForm()
-    table = ShowsTable([])
+    form = SearchShowsHistoryForm()
+    table = ShowhistoryTable([])
     if form.is_submitted():
         name = form.name.data
         time = form.time.data
         exhibit = form.exhibit.data
-        cur = db.get_db().cursor()
+
         cur.execute()
         fetch = cur.fetchall('SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE VisitShow.Showname = %s AND Shows.LocateAt = %s AND VisitShow.Showname = Shows.Name',(name, exhibit))
-        table = ShowHistoryTable([Show(name, time, exhibit) for name, time, exhibit in fetch])
+        table = ShowhistoryTable([ShowsHistoryTable(name, time, exhibit) for name, time, exhibit in fetch])
         return redirect('visitor_show_history.html', form=form, table=table)
     return render_template("visitor_show_history.html", form=form, table=table)
 
@@ -274,26 +260,18 @@ def staff_search_animal():
     form = SearchAnimalForm()
     table = AnimalTable([])
     if form.is_submitted():
-        name = form.name.data
+        name =form.name.data
         species = form.species.data
         age_min = form.age_min.data
         age_max = form.age_max.data
         exhibit = form.exhibit.data
         type = form.type.data
-        query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
-        if name:
-            query.append('Name = "%s"' % name)
-        if species:
-            query.append('Species = "%s"' % species)
-        if age_min:
-            query.append('Age >= "%s"' % age_min)
-        if age_max:
-            query.append('Age <= "%s"' % age_max)
-        query = " AND ".join(query)
+        # todo: age
+        # todo: name and species
         cur = db.get_db().cursor()
-        cur.execute(query)
+        cur.execute('SELECT * FROM Animal WHERE Type = %s AND Place = %s AND Age <= int(%s) AND Age >= int(%s)', (type, exhibit, age_min, age_max))
         fetch = cur.fetchall()
-        table = AnimalTable1([Animal(name, sp, t, age, ex) for name, sp, t, age, ex in fetch])
+        table = AnimalTable([Animal(name, sp, t, age, ex) for name, sp, t, age, ex in fetch])
         return render_template('staff_search_animal.html', form=form, table=table)
     return render_template('staff_search_animal.html', form=form, table=table)
 
@@ -302,9 +280,7 @@ def staff_search_animal():
 @login_required
 def staff_animal_care():
     # todo: link col
-    form = AnimalCare()
-    table = AnimalTable1([])
-    return render_template('staff_animal_care.html',form=form, table=table)
+    return render_template('staff_animal_care.html.html')
 
 
 @app.route("/admin", methods=['GET', 'POST'])
@@ -339,95 +315,47 @@ def admin_view_visitor():
 @login_required
 @app.route("/admin_view_show", methods=['GET', 'POST'])
 def admin_view_show():
-    table = ShowsTable()
+    table = UsersTable([])
     form = AdminRemoveShowsForm()
-    cur = db.get_db().cursor()
     if form.is_submitted():
         print(form.search.data, form.remove.data)
-        name = form.name.data
-        exhibit = form.name.data
-        date = form.date.data
         if form.search.data:
-            if name is None and date is None:
-                cur.execute('SELECT Name, DateAndTime, LocateAt FROM Shows WHERE LocateAt = %s' % exhibit)
-            elif name is None and date is not None:
-                cur.execute('SELECT Name, DateAndTime, LocateAt FROM Animal WHERE LocateAt = %s AND DateAndTime = %s', (exhibit, date))
-            elif name is not None and date is None:
-                cur.execute('SELECT Name, DateAndTime, LocateAt FROM Animal WHERE LocateAt = %s AND Name = %s', (exhibit, name))
-            elif name is not None and date is not None:
-                cur.execute('SELECT Name, DateAndTime, LocateAt FROM Animal WHERE LocateAt = %s AND Name = %s And DateAndTime = %s', (exhibit, name, date))
-            fetch = cur.fetchall()
-            table = ShowsTable([Show(a, b, c) for a, b, c, _, in fetch])
+            flash('SEARCH')
+            return redirect(url_for('admin'))
+        elif form.remove.data:
+            flash('REMOVE')
+            return redirect(url_for('admin'))
     return render_template("admin_view_show.html", table=table, form=form)
 
 
 @login_required
 @app.route("/admin_view_animal", methods=['GET', 'POST'])
 def admin_view_animal():
-    form = SearchAnimalForm()
+    search_animal = SearchAnimalForm()
     table = AnimalTable([])
-    if form.is_submitted():
-        if form.search.data:
-            name = form.name.data
-            species = form.species.data
-            age_min = form.age_min.data
-            age_max = form.age_max.data
-            exhibit = form.exhibit.data
-            type = form.type.data
-            query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"'%(type, exhibit)]
-            if name:
-                query.append('Name = "%s"' % name)
-            if species:
-                query.append('Species = "%s"' % species)
-            if age_min:
-                query.append('Age >= "%s"' % age_min)
-            if age_max:
-                query.append('Age <= "%s"' % age_max)
-            query = " AND ".join(query)
-            # print(query)
-            cur = db.get_db().cursor()
-            cur.execute(query)
-            fetch = cur.fetchall()
-            table = AnimalTable([Animal(name, sp, t, age, ex) for name, sp, t, age, ex in fetch])
-            return render_template('staff_search_animal.html', form=form, table=table)
-        elif form.remove.data:
-            pass# todo: remove data
-    return render_template("admin_view_animal.html", form=form, table=table)
+    if search_animal.is_submitted():
+        return redirect(url_for('admin'))
+    return render_template("admin_view_animal.html", form=search_animal, table=table)
 
-# done
+
 @login_required
 @app.route("/admin_add_animal", methods=['GET', 'POST'])
 def admin_add_animal():
     animal_form = AddAnimalForm()
     if animal_form.is_submitted():
-        name = animal_form.name.data
-        exhibit = animal_form.exhibit.data
-        types = animal_form.type.data
-        species = animal_form.species.data
-        age = animal_form.age.data
-        try:
-            cur = db.get_db().cursor()
-            cur.execute('INSERT INTO Animal VALUES(%s, %s, %s, %s, %s)', (name, species, types, age, exhibit))
-        except Exception as e:
-            flash("Add animal Failed!\n" + str(e.args[1]))
+        # flash('HAHAHA')
+        # todo: age change
+        # todo: add animal to database
         return redirect(url_for('admin'))
     return render_template("admin_add_animal.html", form=animal_form)
 
-# done
+
 @login_required
 @app.route("/admin_add_show", methods=['GET', 'POST'])
 def admin_add_show():
-    form = AddShowForm()
-    if form.is_submitted():
-        name = form.name.data
-        staff = form.staff.data
-        exhibit = form.exhibit.data
-        date = form.date.data
-        try:
-            cur = db.get_db().cursor()
-            cur.execute('INSERT INTO Shows VALUES(%s, %s, %s, %s)', (name, date, exhibit, staff))
-            flash("Add show successful")
-        except IntegrityError as e:
-            flash("Add show Failed!\n" + str(e.args[1]))
+    show_form = AddShowForm()
+    if show_form.is_submitted():
+        # flash('HAHAHA')
+        # todo: add show to database
         return redirect(url_for('admin'))
-    return render_template("admin_add_show.html", form=form)
+    return render_template("admin_add_show.html", form=show_form)

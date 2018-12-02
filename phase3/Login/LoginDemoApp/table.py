@@ -62,6 +62,7 @@ class Animal:
         self.age = age
         self.type = type
 
+
 class AnimalTable(Table):
     name = Col('Name')
     species = Col('Species')
@@ -69,10 +70,12 @@ class AnimalTable(Table):
     age = Col('Age')
     type = Col('Type')
 
+
 class User_info:
     def __init__(self, username, email):
         self.username = username
         self.email = email
+
 
 class UsersTable(Table):
     username = Col('Username')

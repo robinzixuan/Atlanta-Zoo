@@ -1,6 +1,6 @@
-from flask_table import Table, Col, LinkCol, DatetimeCol
+from flask_table import Table, Col, LinkCol, DatetimeCol, ButtonCol
 from LoginDemoApp import db, login_manager
-
+from flask import render_template, url_for, flash, Markup, redirect, request
 class Exhibit:
     def __init__(self, name, size, num_animals, is_water):
         self.name = name
@@ -16,7 +16,7 @@ class ExhibitsTable(Table):
     water = Col('Water')
 
 def exhibit(id):
-    return render_template("exhibit_detail.html", table=table, form=form)
+    return redirect(url_for('ExhibitDetail'))
 
     
 class Exhibit1:
@@ -31,11 +31,10 @@ class ExhibitsTable1(Table):
     log= LinkCol("Log","ExhibitLog", url_kwargs=dict(id='id'), attr='name' )
     
 def view_animal(id):   
-    return render_template("animal_detail.html", table=table, form=form)
+    return redirect(url_for('ExhibitDetail'))
    
 def ExhibitLog(id):
-    return render_template("visitor_exhibit_history.html", table=table, form=form)   
-
+    return redirect(url_for('SearchShowHistoryForm'))
 
 class Animal:
     def __init__(self, name, species, exhibit, age, type):
@@ -54,7 +53,7 @@ class AnimalTable(Table):
     
     
 def view_exihibit(id):
-    return render_template("exhibit_detail.html", table=table, form=form)
+    return redirect(url_for('ExhibitDetail'))
 
     
 class Show1:
@@ -70,7 +69,7 @@ class ShowsTable1(Table):
     Log= LinkCol("Log","ShowLog",url_kwargs=dict(id='id'), attr='name' )
     
 def ShowLog(id):
-    return render_template("visitor_show_history.html", table=table, form=form)    
+    return redirect(url_for('SearchShowHistoryForm'))    
     
 
 class ExhibithistoryTable(Table):
@@ -84,10 +83,10 @@ class Exihibithisthory:
         self.visit=visit
         self.time=time
         
-'''
+
 def Log_view(id):
-    return render_template("exhibit_detail.html", table=table, form=form)    
-'''
+    return redirect(url_for('ExhibitDetail'))
+
 
 class ShowhistoryTable(Table):
     name=Col('Name')
@@ -113,7 +112,7 @@ class ShowsTable(Table):
     name = Col('Name')
     time = DatetimeCol('Time')
     exhibit = Col('Exhibit')
-    delete= LinkCol("Delete","showdelete", url_kwargs=dict(id='id'), attr= 'name' )
+    delete= ButtonCol("Delete","showdelete", url_kwargs=dict(id='id'), attr= 'name' )
 
 def showdelete(id):
      cur = db.get_db().cursor()
@@ -129,21 +128,19 @@ class Animal1:
         self.type = type
 
 class AnimalTable1(Table):
-    name = LinkCol('Name','animal_care',url_kwargs=dict(id='id'), attr='name' )
+    name = LinkCol('Name','staff_animal_care', url_kwargs=dict(name='name'))
     species = Col('Species')
     exhibit = Col('Exhibit')
     age = Col('Age')
     type = Col('Type')
 
-def animal_care(id):
-    return render_template("animal_care.html", table=table, form=form)
 
 
 class AnimalcareTable(Table):
     name=Col("Staff Member")
     note=Col("Note")
     time=DatetimeCol('Time')
-    
+
 class Animalcare:
     def __init__(self, name, time, note):
         self.name=name
@@ -165,7 +162,7 @@ class AnimalTabledelete(Table):
     exhibit = Col('Exhibit')
     age = Col('Age')
     type = Col('Type')
-    delete= LinkCol("Delete","delete_animal", url_kwargs=dict(id='id'), attr='name' )
+    delete= ButtonCol("Delete","delete_animal", url_kwargs=dict(id='id'))
     
 def delete_animal(id):
      cur = db.get_db().cursor()
@@ -183,7 +180,7 @@ class Visitors:
 class VisitorsTable(Table):
     name = Col('Username')
     email = Col('Email')
-    delete= LinkCol("Delete","visitordelete", url_kwargs=dict(id='id'), attr='name' )
+    delete= ButtonCol("Delete","visitordelete", url_kwargs=dict(id='id'), attr='name' )
 
 def visitordelete():
     cur = db.get_db().cursor()
@@ -198,7 +195,7 @@ class Staffs:
 class StaffsTable(Table):
     name = Col('Username')
     email = Col('Email')
-    delete= LinkCol("Delete","staffdelete", url_kwargs=dict(id='id'), attr='name' )
+    delete= ButtonCol("Delete","staffdelete", url_kwargs=dict(id='id'), attr='name' )
 
 def staffdelete():
     cur = db.get_db().cursor()

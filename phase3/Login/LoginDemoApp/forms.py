@@ -9,7 +9,13 @@ from LoginDemoApp.database_tables import load_user
 
 exhibit_choices = [('Pacific', 'Pacific'), ('Jungle', 'Jungle'), ('Sahara', 'Sahara'), ('Mountainous', 'Mountanious')]
 type_choices = [('Mammal', 'Mammal'), ('Fish', 'Fish'), ('Amphibian', 'Amphibian'), ('Bird', 'Bird')]
-
+#
+# class StaffChoices:
+#     staff_choices = []
+#
+#     @staticmethod
+#     def setter(staffs):
+#         cls.staff_choices = staffs
 
 # Classes for wt-forms
 
@@ -47,11 +53,19 @@ class SearchExhibitsForm(FlaskForm):
     size_max = StringField('Max')
 
 
+class SearchShowHistoryForm(FlaskForm):
+    name = StringField('Name')
+    exhibit = SelectField('Exhibit', choices=exhibit_choices)
+    date = DateTimeField('Datetime', format='%Y-%m-%d %H:%M:%S')
+    search = SubmitField('Search Show')
+
+
+
 class SearchExhibitsHistoryForm(FlaskForm):
     name = StringField('Name')
     visit_num_min = StringField('Min')
     visit_num_max = StringField('Max')
-    time = DateField('Time', format = '%m/%d/%Y')
+    date = DateField('Time', format ='%m/%d/%Y')
     search = SubmitField('Search')
 
 
@@ -63,6 +77,16 @@ class SearchAnimalForm(FlaskForm):
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
     type = SelectField('Type', choices=type_choices)
     search = SubmitField('Search')
+
+class AdminSearchAnimalForm(FlaskForm):
+    name = StringField('Name')
+    species = StringField('Species')
+    age_min = StringField('Min')
+    age_max = StringField('Max')
+    exhibit = SelectField('Exhibit', choices=exhibit_choices)
+    type = SelectField('Type', choices=type_choices)
+    search = SubmitField('Search')
+    remove = SubmitField('Remove')
 
 
 class AddAnimalForm(FlaskForm):
@@ -78,14 +102,16 @@ class RemoveForm(FlaskForm):
     remove = SubmitField('Remove')
 
 
+
 class AddShowForm(FlaskForm):
     name = StringField('Name')
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
-    staff = StringField('Staff')
     time = StringField('Time')
     date = DateTimeField('Datetime', format='%Y-%m-%d %H:%M:%S')
     submit = SubmitField('Add Show')
-
+    staff = SelectField('Staff', choices = [])
+    # def __init__(self, staff):
+    #     pass
 
 class SearchShowsForm(FlaskForm):
     name = StringField('Name')

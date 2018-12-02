@@ -104,7 +104,7 @@
 </div>
 
 <div id="nav">
-    <form action="" method="POST">
+    <input action="" method="POST">
         {{ form.name.label }}
 
         <div class="input">
@@ -129,9 +129,11 @@
         </div>
         Age: <br>
         {{ form.age_max.label }} <input type="button" onclick="add()" value="+">
-        <div class="input" type="text" id="txt" value="1">
-            {{ form.age_max }}
-        </div>
+         <input type="text" id="txt" value="1">
+
+{#        <div class="input" type="text" id="txt" value="1">#}
+{#            {{ form.age_max }}#}
+{#        </div>#}
         <input type="button" onclick="sub()" value="-"></td><br>
 
         {{ form.age_min.label }} <input type="button" onclick="add2()" value="+">
@@ -155,6 +157,7 @@
     </form>
 
 </div>
+    <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
 
 </body>
 </html>
