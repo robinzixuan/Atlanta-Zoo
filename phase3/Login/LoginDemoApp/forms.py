@@ -53,7 +53,7 @@ class SearchExhibitsForm(FlaskForm):
     size_max = StringField('Max')
     sort = SubmitField('OrderBy')
     direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
-    by = SelectField('By', choices=[("Name", "Name"),("Size", "Size"),("NumAnimals", "NumAnimals"),("is_water", "is_water")])
+    by = SelectField('By', choices=[("Name", "Name"),("Size", "Size"),("count", "NumAnimals"),("is_water", "is_water")])
 
 
 class SearchShowHistoryForm(FlaskForm):

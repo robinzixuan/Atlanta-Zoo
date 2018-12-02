@@ -206,21 +206,34 @@ def visitor_search_exhibit():
                 "visitor_search_exhibit_animal_max") else None
             water_feature = 1 if form.water_feature.data else 0
             query = [
-                'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s"' %
+                'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' %
                 (water_feature)]
             if name:
-                query.append('Exhibit.Name = "%s"' % name)
-            if size_min:
-                query.append('Exhibit.Size >= "%s"' % size_min)
-            if size_max:
-                query.append('Exhibit.Size <= "%s"' % size_max)
-            query = " AND ".join(query)
-            if animal_min and animal_max:
-                query += 'GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (
-                    animal_max, animal_min)
+                if size_min and size_max:
+                    if animal_min and animal_max:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, name, size_min, size_max, animal_min, animal_max)]
+                    else:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, name, size_min, size_max)]
+                else:
+                    if animal_min and animal_max:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, name, animal_min, animal_max)]
+                    else:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, name)]
+            else:
+                if size_min and size_max:
+                    if animal_min and animal_max:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, size_min, size_max, animal_min, animal_max)]
+                    else:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, size_min, size_max)]
+                else:
+                    if animal_min and animal_max:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, animal_min, animal_max)]
+                    else:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' % water_feature]
+            query = query[0]
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
             cur = db.get_db().cursor()
-            print(query)
+            print("tag1", query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitsTable(
@@ -236,20 +249,34 @@ def visitor_search_exhibit():
             animal_max = form.animal_max.data
             water_feature = 1 if form.water_feature.data else 0
             query = [
-                'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s"' %
+                'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' %
                 (water_feature)]
             if name:
-                query.append('Exhibit.Name = "%s"' % name)
-            if size_min:
-                query.append('Exhibit.Size >= "%s"' % size_min)
-            if size_max:
-                query.append('Exhibit.Size <= "%s"' % size_max)
-            query = " AND ".join(query)
-            if animal_min and animal_max:
-                query += 'GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (
-                animal_max, animal_min)
+                if size_min and size_max:
+                    if animal_min and animal_max:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, name, size_min, size_max, animal_min, animal_max)]
+                    else:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, name, size_min, size_max)]
+                else:
+                    if animal_min and animal_max:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, name, animal_min, animal_max)]
+                    else:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, name)]
+            else:
+                if size_min and size_max:
+                    if animal_min and animal_max:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, size_min, size_max, animal_min, animal_max)]
+                    else:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, size_min, size_max)]
+                else:
+                    if animal_min and animal_max:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, animal_min, animal_max)]
+                    else:
+                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' % water_feature]
+            query = query[0]
+            query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
             cur = db.get_db().cursor()
-            print(query)
+            print("tag2",query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitsTable(
@@ -260,8 +287,7 @@ def visitor_search_exhibit():
             res.set_cookie("visitor_search_exhibit_size_min", size_min)
             res.set_cookie("visitor_search_exhibit_size_max", size_max)
             res.set_cookie("visitor_search_exhibit_animal_min", animal_min)
-            res.set_cookie("visitor_search_exhibit_animal_max", animal_min)
-            # res.set_cookie("visitor_search_exhibit_water_feature", water_feature)
+            res.set_cookie("visitor_search_exhibit_animal_max", animal_max)
             return res
     return render_template("visitor_search_exhibit.html", form=form)
 
@@ -402,15 +428,19 @@ def visitor_exhibit_history():
             visit_num_min = request.cookies.get("visitor_exhibit_history_visit_num_min") if request.cookies.get(
                 "visitor_exhibit_history_visit_num_min") else None
             query = [
-                'SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s"' % date]
+                'SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname' % date]
             if name:
-                query.append('Name = "%s"' % name)
-            if visit_num_min and visit_num_max:
-                query.append('GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (
-                    visit_num_max, visit_num_min))
-            query = " AND ".join(query)
+                if visit_num_min and visit_num_max:
+                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" AND Name = "%s" GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (date, name, visit_num_max, visit_num_min)]
+                else:
+                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" AND Name = "%s" GROUP BY Exhibitname' % (date, name)]
+            else:
+                if visit_num_min and visit_num_max:
+                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (date, visit_num_max, visit_num_min)]
+                else:
+                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname' % date]
+            query = query[0]
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
-            print(query)
             cur = db.get_db().cursor()
             cur.execute(query)
             fetch = cur.fetchall()
@@ -424,15 +454,19 @@ def visitor_exhibit_history():
             visit_num_max = form.visit_num_max.data
             visit_num_min = form.visit_num_min.data
             query = [
-                'SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s"' % date]
+                'SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname' % date]
             if name:
-                query.append('Name = "%s"' % name)
-            query = " AND ".join(query)
-            if visit_num_min and visit_num_max:
-                query += 'GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (
-                visit_num_max, visit_num_min)
+                if visit_num_min and visit_num_max:
+                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" AND Name = "%s" GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (date, name, visit_num_max, visit_num_min)]
+                else:
+                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" AND Name = "%s" GROUP BY Exhibitname' % (date, name)]
+            else:
+                if visit_num_min and visit_num_max:
+                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (date, visit_num_max, visit_num_min)]
+                else:
+                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname' % date]
+            query = query[0]
             cur = db.get_db().cursor()
-            print(query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitHistoryTable(
