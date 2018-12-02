@@ -185,17 +185,13 @@
         <div class="select">
             {{ form.exhibit }}
         </div>
-        Age: <br>
-        {{ form.age_max.label }} <input type="button" onclick="add()" value="+">
-        <div class="input" type="text" id="txt" value="1">
-            {{ form.age_max }}
-        </div>
+        Age:
+        {{ form.age_max.label }}
+        <input type="button" onclick="add()" value="+">
+        <input type="text" name="age_max" id="txt" value="10">
         <input type="button" onclick="sub()" value="-"></td><br>
-
         {{ form.age_min.label }} <input type="button" onclick="add2()" value="+">
-        <div class="input" type="text" id="txt" value="1">
-            {{ form.age_min }}
-        </div>
+        <input type="text" name="age_min" id="txt" value="1">
         <input type="button" onclick="sub2()" value="-"></td><br>
         {{ form.type.label }}
         <div class="select">
@@ -206,6 +202,9 @@
         </div>
         <div class="select">
             {{ form.by }}
+        </div>
+        <div class="select">
+            {{ form.direction }}
         </div>
         <div class="input">
             {{ form.search }}

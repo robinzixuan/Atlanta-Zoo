@@ -210,14 +210,11 @@ def visitor_search_animal():
     form = SearchAnimalForm()
     if form.is_submitted():
         if form.sort.data:
-            if request.cookies.get("animal_name"):
-                form.name.data = request.cookies.get("animal_name")
-            if request.cookies.get("animal_species"):
-                form.species.data = request.cookies.get("animal_species")
-            name = form.name.data
-            species = form.species.data
-            age_min = form.age_min.data
-            age_max = form.age_max.data
+            name = request.cookies.get("visitor_search_animal_name") if request.cookies.get("visitor_search_animal_name") else None
+            species = request.cookies.get("visitor_search_animal_species") if request.cookies.get("visitor_search_animal_species") else None
+
+            age_min = request.cookies.get("visitor_search_animal_age_min") if request.cookies.get("visitor_search_animal_age_min") else None
+            age_max = request.cookies.get("visitor_search_animal_age_max") if request.cookies.get("visitor_search_animal_age_max") else None
             exhibit = form.exhibit.data
             type = form.type.data
             query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
@@ -230,7 +227,8 @@ def visitor_search_animal():
             if age_max:
                 query.append('Age <= "%s"' % age_max)
             query = " AND ".join(query)
-            query += "ORDER BY Age ASC"
+            query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
+            print(query)
             cur = db.get_db().cursor()
             cur.execute(query)
             fetch = cur.fetchall()
@@ -259,8 +257,12 @@ def visitor_search_animal():
             fetch = cur.fetchall()
             table = AnimalTable([Animal(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
             res = make_response(render_template('visitor_search_animal.html', form=form, table=table))
-            res.set_cookie("animal_name", name)
-            res.set_cookie("animal_species", species)
+            res.set_cookie("visitor_search_animal_name", name)
+            res.set_cookie("visitor_search_animal_species", species)
+            res.set_cookie("visitor_search_animal_age_min", age_min)
+            res.set_cookie("visitor_search_animal_age_max", age_max)
+            res.set_cookie("visitor_search_animal_exhibit", exhibit)
+            res.set_cookie("visitor_search_animal_type", type)
             return res
     return render_template("visitor_search_animal.html", form=form)
 

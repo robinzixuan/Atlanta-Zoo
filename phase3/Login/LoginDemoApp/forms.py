@@ -80,8 +80,9 @@ class SearchAnimalForm(FlaskForm):
     type = SelectField('Type', choices=type_choices)
     search = SubmitField('Search')
     sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
     by = SelectField('By', choices=[("Name", "Name"), ("Species", "Species"), ("Age", "Age"),
-                                    ("Exhibit", "Exhibit"),("Type", "Type")])
+                                    ("Place", "Exhibit"),("Type", "Type")])
 
 
 class AdminSearchAnimalForm(FlaskForm):
