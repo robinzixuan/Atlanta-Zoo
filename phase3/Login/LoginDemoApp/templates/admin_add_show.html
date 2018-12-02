@@ -165,30 +165,48 @@ app.controller('orderByCtrl', function($scope) {
 
 <div id="nav">
 <form action="" method="POST">
-  {{ form.name.label }}
-  <div class="input">
-    {{form.name}}
-  </div>
+    {{ form.hidden_tag() }}
+
+    {{ form.name.label }}
+            <div class="input">
+                {% if form.name.errors %}
+                    {{ form.name }}
+                    <div class="invalid-feedback">
+                        {% for error in form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.name }}
+                {% endif %}
+            </div>
   {{form.exhibit.label}}
   <div class = "select">
     {{form.exhibit}}
   </div>
-  {{form.staff.label}}
-  <div class = "select">
-    {{form.staff}}
-  </div>
+  {{ form.staff.label }}
+            <div class="input">
+                {% if form.staff.errors %}
+                    {{ form.staff }}
+                    <div class="invalid-feedback">
+                        {% for error in form.staff.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.staff }}
+                {% endif %}
+            </div>
   {{form.date.label}}
   <div class="input" type="datetime-local" value="2015-09-24T13:59:59">
     {{form.date}}
-  </div>
-  {{form.time.label}}
-  <div class="input">
-    {{form.time}}
   </div>
 
 <div class = "input">
        {{ form.submit }}
 </div>
+    <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
+
 <!--   <input type="submit" value="Search" /> -->
 </form>
 

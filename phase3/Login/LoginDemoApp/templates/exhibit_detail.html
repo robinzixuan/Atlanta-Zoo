@@ -99,11 +99,11 @@ th
 </div>
 
 <div id="nav">
-<form action="form_action.asp" method="get">
-  {{form.name.label}}
-  {{form.size.label}}
-  {{form.num_animals.label}}
-  {{form.water_feature.label}}
+<form action="" method="POST">
+  {{form.name.label}} {{form.name.data}}
+  {{form.size.label}} {{form.size.data}}
+  {{form.num_animals.label}} {{form.num_animals.data}}
+  {{form.water_feature.label}} {{form.water_feature.data}}
   <div class="input">
     {{form.log_visit}}
   </div>
@@ -113,6 +113,6 @@ th
 {{table}}
 
 </div>
-
+<a href="{{url_for('visitor')}}"><button type="button">Log Out</button></a>
 </body>
 </html>

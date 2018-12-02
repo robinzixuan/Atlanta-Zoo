@@ -93,13 +93,13 @@ th
 </style>
 <script>
     function add(){
-        var txt=document.getElementById("txt");
+        var txt=document.getElementById("age");
         var a=txt.value;
         a++;
         txt.value=a;
     }
     function sub(){
-        var txt=document.getElementById("txt");
+        var txt=document.getElementById("age");
         var a=txt.value;
         if(a>1){
             a--;
@@ -165,31 +165,33 @@ app.controller('orderByCtrl', function($scope) {
 
 <div id="nav">
 <form action="" method="POST">
-  {{ form.name.label }}
-  <div class="input">
-    {{form.name}}
-  </div>
-  {{form.exhibit.label}}
-  <div class = "select">
-    {{form.exhibit}}
-  </div>
+       {{ form.hidden_tag() }}
+    {{ form.name.label }}
+            <div class="input">
+                   {{ form.name }}
+            </div>
+    {{ form.exhibit.label }}
+            <div class="input">
+                    {{ form.exhibit }}
+            </div>
+        {{ form.species.label }}
+            <div class="input">
+                    {{ form.species }}
+            </div>
   {{form.type.label}}
   <div class = "select">
     {{form.type}}
   </div>
-  {{form.species.label}}
-  <div class="input">
-    {{form.species}}
-  </div>
   {{form.age.label}}
   <input type="button" onclick="add()" value="+">
-  <input type="text" id="txt" value="1">
-    {{form.age}}
+  <input name="age" id="age" value="1">
   <input type="button" onclick="sub()" value="-"></td><br>
   
 <div class = "input"> 
        {{ form.submit }}
 </div>
+    <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
+
 <!--   <input type="submit" value="Search" /> -->
 </form>
 

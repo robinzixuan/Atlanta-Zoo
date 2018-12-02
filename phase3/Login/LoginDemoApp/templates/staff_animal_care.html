@@ -99,12 +99,12 @@ th
 </div>
 
 <div id="nav">
-<form action="form_action.asp" method="get">
-  {{form.name.label}}
-  {{form.species.label}}
-  {{form.age.label}}
-  {{form.exhibit.label}}
-  {{form.type.fish}}
+<form action="" method="POST">
+  {{form.name.label}}: {{form.name.data}}
+  {{form.species.label}}: {{form.species.data}}
+  {{form.age.label}}: {{form.age.data}}
+  {{form.exhibit.label}}: {{form.exhibit.data}}
+  {{form.type.label}}: {{form.type.data}}
   <div class="input" type="text" id="txt">
     {{form.notes}}
   </div>
@@ -116,6 +116,7 @@ th
 {{table}}
 
 </div>
+    <a href="{{url_for('staff')}}"><button type="button">Back</button></a>
 
 </body>
 </html>

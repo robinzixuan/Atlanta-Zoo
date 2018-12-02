@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 {% block content %}
-<article class="center">
+    <article class="center">
         <h1 class="main_title">Login</h1>
         <form method="POST" action="">
             <!-- The hidden_tag function generates a CSRF token to prevent CSRF -->
@@ -33,16 +33,16 @@
                     {{ form.password }}
                 {% endif %}
             </div>
-             <div class="input">
-                    {{ form.remember }}
-                    {{ form.remember.label }}
-                </div>
+            <div class="input">
+                {{ form.remember }}
+                {{ form.remember.label }}
+            </div>
             <div class="input">
                 {{ form.submit }}
             </div>
         </form>
         <div>
-                <a href="{{url_for('sign_up')}}">Don't have an account?</a>
+            <a href="{{ url_for('sign_up') }}">Don't have an account?</a>
         </div>
     </article>
 {% endblock %}
