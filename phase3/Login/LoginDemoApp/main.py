@@ -135,6 +135,7 @@ def logout():
     return redirect(url_for('home'))
 
 
+# no cookies
 @login_required
 @app.route("/animal_detail/<string:name>/<string:species>", methods=['GET', 'POST'])
 def animal_detail(name, species):
@@ -150,6 +151,7 @@ def animal_detail(name, species):
     return render_template("animal_detail.html", form=form)
 
 
+# cookies good
 @login_required
 @app.route("/exhibit_detail/<string:id>", methods=['GET', 'POST'])
 def exhibit_detail(id):
@@ -158,15 +160,21 @@ def exhibit_detail(id):
     cur.execute('SELECT * FROM Exhibit WHERE Name = "%s"' % id)
     fetch = cur.fetchone()
     name, is_water, size = fetch
-    cur.execute('SELECT * FROM Animal WHERE Place = "%s"' % id)
-    animals = cur.fetchall()
-    num_animals = len(animals)
+    # todo: merge into one sql query
     form.name.data = name
     form.size.data = size
     form.water_feature.data = "YES" if int(is_water) else "NO"
+    if form.is_submitted():
+        cur.execute('SELECT * FROM Animal WHERE Place = "%s" ORDER BY %s %s' % (id, form.by.data, form.direction.data))
+        animals = cur.fetchall()
+    else:
+        cur.execute('SELECT * FROM Animal WHERE Place = "%s"' % id)
+        animals = cur.fetchall()
+    num_animals = len(animals)
     form.num_animals.data = num_animals
-    print(animals)
+    # print(animals)
     table = ExhibitsTable1([Exhibit1(name, sp) for name, sp, _, _, _ in animals])
+
     return render_template("exhibit_detail.html", form=form, table=table)
 
 
@@ -339,43 +347,86 @@ def staff():
     # print(type(current_user), dir(current_user))
     return render_template('staff.html')
 
-
+# cookie good
 @app.route("/staff_view_shows", methods=['GET', 'POST'])
 @login_required
 def staff_view_shows():
+    form=StaffSearchShowsForm()
+    if form.is_submitted():
+        by=form.by.data
+        direction=form.direction.data
+        query = 'SELECT * FROM Shows WHERE Hostby = "%s"' % current_user.username
+        query += " ORDER BY %s %s " % (by, direction)
+    else:
+        query = 'SELECT * FROM Shows WHERE Hostby = "%s"' % current_user.username
     cur = db.get_db().cursor()
-    cur.execute('SELECT * FROM Shows WHERE Hostby = %s', current_user.username)
+    cur.execute(query)
     fetch = cur.fetchall()
     table = ShowsTable1([Show1(n, d, e) for n, d, e, _ in fetch])
-    return render_template('staff_view_shows.html', table=table)
+    return render_template('staff_view_shows.html', form=form, table=table)
 
-
+# cookie good
 @app.route("/staff_search_animal", methods=['GET', 'POST'])
 @login_required
 def staff_search_animal():
     form = SearchAnimalForm()
     table = AnimalTable([])
     if form.is_submitted():
-        name = form.name.data
-        species = form.species.data
-        age_min = form.age_min.data
-        age_max = form.age_max.data
-        exhibit = form.exhibit.data
-        type = form.type.data
-        query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
-        if name:
-            query.append('Name = "%s"' % name)
-        if species:
-            query.append('Species = "%s"' % species)
-        if age_min:
-            query.append('Age >= "%s"' % age_min)
-        if age_max:
-            query.append('Age <= "%s"' % age_max)
-        query = " AND ".join(query)
-        cur = db.get_db().cursor()
-        cur.execute(query)
-        fetch = cur.fetchall()
-        table = AnimalTable1([Animal(name, sp, t, age, ex) for name, sp, t, age, ex in fetch])
+        if form.sort.data:
+            if request.cookies.get("animal_name_staff"):
+                form.name.data = request.cookies.get("animal_name_staff")
+            if request.cookies.get("animal_species_staff"):
+                form.species.data = request.cookies.get("animal_species_staff")
+            name = form.name.data
+            species = form.species.data
+            age_min = form.age_min.data
+            age_max = form.age_max.data
+            exhibit = form.exhibit.data
+            type = form.type.data
+            by=form.by.data
+            direction=form.direction.data
+            query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
+            if name:
+                query.append('Name = "%s"' % name)
+            if species:
+                query.append('Species = "%s"' % species)
+            if age_min:
+                query.append('Age >= "%s"' % age_min)
+            if age_max:
+                query.append('Age <= "%s"' % age_max)
+            query = " AND ".join(query)
+            query += " ORDER BY %s %s " % (by, direction)
+            cur = db.get_db().cursor()
+            cur.execute(query)
+            fetch = cur.fetchall()
+            table = AnimalTable1([Animal(name, sp, t, age, ex) for name, sp, t, age, ex in fetch])
+            res = make_response(render_template('staff_search_animal.html', form=form, table=table))
+            return res
+        elif form.search.data:
+            name = form.name.data
+            species = form.species.data
+            age_min = form.age_min.data
+            age_max = form.age_max.data
+            exhibit = form.exhibit.data
+            type = form.type.data
+            query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
+            if name:
+                query.append('Name = "%s"' % name)
+            if species:
+                query.append('Species = "%s"' % species)
+            if age_min:
+                query.append('Age >= "%s"' % age_min)
+            if age_max:
+                query.append('Age <= "%s"' % age_max)
+            query = " AND ".join(query)
+            cur = db.get_db().cursor()
+            cur.execute(query)
+            fetch = cur.fetchall()
+            table = AnimalTable([Animal(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
+            res = make_response(render_template('staff_search_animal.html', form=form, table=table))
+            res.set_cookie("animal_name_staff", name)
+            res.set_cookie("animal_species_staff", species)
+            return res
         return render_template('staff_search_animal.html', form=form, table=table)
     return render_template('staff_search_animal.html', form=form, table=table)
 
@@ -384,25 +435,47 @@ def staff_search_animal():
 @login_required
 def staff_animal_care(name, species):
     form = AnimalCareForm()
-
-    cur = db.get_db().cursor()
-    cur.execute("SELECT * FROM Animal WHERE Name = %s AND Species = %s", (name, species))
-    fetch = cur.fetchone()
-    name, species, type, age, exhibit = fetch
-    form.name.data = name
-    form.species.data = species
-    form.type.data = type
-    form.age.data = age
-    form.exhibit.data = exhibit
-
-    cur.execute("SELECT * FROM Note WHERE AnimalName = %s AND AnimalSpecies = %s", (name, species))
-    fetch = cur.fetchall()
-    print(fetch)
-    table = AnimalCareTable([AnimalCareTable(staff, note, time) for staff, _, _, time, note in fetch])
-    # table = AnimalCareTable([ExhibitsTable(name, size, num_animals, water) for name, size, num_animals, water in fetch])
-
+    table=AnimalCareTable([])
     if form.is_submitted():
-        flash('Log nothing')
+        if form.sort.data:
+            cur = db.get_db().cursor()
+            cur.execute("SELECT * FROM Animal WHERE Name = %s AND Species = %s", (name, species))
+            fetch = cur.fetchone()
+            name, species, type, age, exhibit = fetch
+            form.name.data = name
+            form.species.data = species
+            form.type.data = type
+            form.age.data = age
+            form.exhibit.data = exhibit
+            by = form.by.data
+            direction = form.direction.data
+            query = ["SELECT * FROM Note WHERE AnimalName = %s AND AnimalSpecies = %s", (name, species)]
+            query = " AND ".join(query)
+            query += " ORDER BY %s %s " % (by, direction)
+            cur = db.get_db().cursor()
+            cur.execute(query)
+            fetch = cur.fetchall()
+            table = AnimalCareTable([AnimalCareTable(staff, note, time) for staff, _, _, time, note in fetch])
+        elif form.log_notes.data:
+            cur = db.get_db().cursor()
+            cur.execute("SELECT * FROM Animal WHERE Name = %s AND Species = %s", (name, species))
+            fetch = cur.fetchone()
+            name, species, type, age, exhibit = fetch
+            form.name.data = name
+            form.species.data = species
+            form.type.data = type
+            form.age.data = age
+            form.exhibit.data = exhibit
+            cur.execute("SELECT * FROM Note WHERE AnimalName = %s AND AnimalSpecies = %s", (name, species))
+            fetch = cur.fetchall()
+            staff, _, _, time, note = fetch
+            form.Hostby.data = staff
+            form.note.data = note
+            form.date.data = time
+            table = AnimalCareTable([AnimalCareTable(staff, note, time) for staff, _, _, time, note in fetch])
+            # table = AnimalCareTable([ExhibitsTable(name, size, num_animals, water) for name, size, num_animals, water in fetch])
+# todo: add note to animal
+        return render_template('staff_animal_care.html', form=form, table=table)
     return render_template('staff_animal_care.html', form=form, table=table)
 
 

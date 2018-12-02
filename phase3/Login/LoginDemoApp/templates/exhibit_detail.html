@@ -100,10 +100,20 @@ th
 
 <div id="nav">
 <form action="" method="POST">
-  {{form.name.label}} {{form.name.data}}
-  {{form.size.label}} {{form.size.data}}
-  {{form.num_animals.label}} {{form.num_animals.data}}
-  {{form.water_feature.label}} {{form.water_feature.data}}
+  {{form.name.label}}: {{form.name.data}} <br>
+  {{form.size.label}}: {{form.size.data}}<br>
+  {{form.num_animals.label}}: {{form.num_animals.data}}<br>
+  {{form.water_feature.label}}: {{form.water_feature.data}}<br>
+    <div class="input">
+            {{ form.sort }}
+        </div>
+        <div class="select">
+            {{ form.by }}
+        </div>
+        <div class="select">
+            {{ form.direction }}
+        </div>
+
   <div class="input">
     {{form.log_visit}}
   </div>

@@ -122,6 +122,12 @@ class AddShowForm(FlaskForm):
     #     pass
 
 
+class StaffSearchShowsForm(FlaskForm):
+   sort = SubmitField('OrderBy')
+   direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+   by = SelectField('By', choices=[("Name", "Name"), ("Time", "Date")])
+
+
 class SearchShowsForm(FlaskForm):
     name = StringField('Name')
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
@@ -143,6 +149,10 @@ class ExhibitDetail(FlaskForm):
     size = StringField('Size')
     num_animals = StringField('Num Animals')
     water_feature = StringField('Water Feature')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC", "ASC"), ("DESC", "DESC")])
+    by = SelectField('By', choices=[("Name", "Name"), ("Species", "Species")])
+        #, ("Age", "Age"),("Place", "Exhibit"), ("Type", "Type")])
 
 
 class AnimalDetail(FlaskForm):
@@ -154,6 +164,7 @@ class AnimalDetail(FlaskForm):
 
 
 class AnimalCareForm(FlaskForm):
+    Hostby=StringField('Hostby')
     name = StringField('Name')
     species = StringField('Species')
     age = StringField('Age')
@@ -161,4 +172,7 @@ class AnimalCareForm(FlaskForm):
     type = StringField('Type')
     notes = StringField('Notes')
     log_notes = SubmitField('Log Notes')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Staff Member", "Hostby"),("Note", "notes"), ("Time", "Date")])
 
