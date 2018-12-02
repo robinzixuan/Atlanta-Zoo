@@ -93,33 +93,29 @@ th
 </style>
 <script>
     function add(){
-        var txt=document.getElementById("txt");
+        var txt=document.getElementById("visit_num_max");
         var a=txt.value;
         a++;
         txt.value=a;
-        document.form.#visit_num_max = a;
-        {#v_n_m.value ++;#}
     }
     function sub(){
-        var txt=document.getElementById("txt");
+        var txt=document.getElementById("visit_num_max");
         var a=txt.value;
         if(a>1){
             a--;
             txt.value=a;
-            document.form.visit_num_max = a;
         }else{
             txt.value=1;
-            document.form.visit_num_max = 1;
         }
     }
     function add2(){
-        var txt=document.getElementById("txt2");
+        var txt=document.getElementById("visit_num_min");
         var a=txt.value;
         a++;
         txt.value=a;
     }
     function sub2(){
-        var txt=document.getElementById("txt2");
+        var txt=document.getElementById("visit_num_min");
         var a=txt.value;
         if(a>1){
             a--;
@@ -176,14 +172,12 @@ app.controller('orderByCtrl', function($scope) {
   Number of Visits: <br>
   {{form.visit_num_max.label}}
   <input type="button" onclick="add()" value="+">
-    <input type="text" id="txt" value="1">
-
+    <input type="text" id="visit_num_max" name = "visit_num_max" value="1">
 <input type="button" onclick="sub()" value="-"></td><br>
+
 {{form.visit_num_min.label}}
   <input type="button" onclick="add2()" value="+">
-  <div class="input" type="text" id="txt" value="1">
-    {{form.visit_num_min}}
-  </div>
+    <input type="text" id="visit_num_min" name = "visit_num_min" value="1">
 <input type="button" onclick="sub2()" value="-"></td><br>
 
   {{form.date.label}}

@@ -93,13 +93,13 @@ th
 </style>
 <script>
     function add(){
-        var txt=document.getElementById("txt");
+        var txt=document.getElementById("age");
         var a=txt.value;
         a++;
         txt.value=a;
     }
     function sub(){
-        var txt=document.getElementById("txt");
+        var txt=document.getElementById("age");
         var a=txt.value;
         if(a>1){
             a--;
@@ -168,42 +168,15 @@ app.controller('orderByCtrl', function($scope) {
        {{ form.hidden_tag() }}
     {{ form.name.label }}
             <div class="input">
-                {% if form.name.errors %}
-                    {{ form.name }}
-                    <div class="invalid-feedback">
-                        {% for error in form.name.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.name }}
-                {% endif %}
+                   {{ form.name }}
             </div>
     {{ form.exhibit.label }}
             <div class="input">
-                {% if form.exhibit.errors %}
                     {{ form.exhibit }}
-                    <div class="invalid-feedback">
-                        {% for error in form.exhibit.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.exhibit }}
-                {% endif %}
             </div>
         {{ form.species.label }}
             <div class="input">
-                {% if form.species.errors %}
                     {{ form.species }}
-                    <div class="invalid-feedback">
-                        {% for error in form.species.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.species }}
-                {% endif %}
             </div>
   {{form.type.label}}
   <div class = "select">
@@ -211,8 +184,7 @@ app.controller('orderByCtrl', function($scope) {
   </div>
   {{form.age.label}}
   <input type="button" onclick="add()" value="+">
-  <input type="text" id="txt" value="1">
-    {{form.age}}
+  <input name="age" id="age" value="1">
   <input type="button" onclick="sub()" value="-"></td><br>
   
 <div class = "input"> 

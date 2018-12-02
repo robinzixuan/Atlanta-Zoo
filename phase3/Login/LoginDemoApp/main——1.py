@@ -1,7 +1,7 @@
 from LoginDemoApp import app, db, bcrypt, serializer
 from LoginDemoApp.database_tables import load_user, User
 from LoginDemoApp.forms import *
-from LoginDemoApp.table import *
+from LoginDemoApp.table_0 import *
 from flask import render_template, url_for, flash, Markup, redirect, request
 from flask_login import login_user, current_user, logout_user, login_required
 from itsdangerous import SignatureExpired, BadTimeSignature

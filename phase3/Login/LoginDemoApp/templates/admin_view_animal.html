@@ -96,6 +96,72 @@
     }
 
 </style>
+<script>
+    function add(){
+        var txt=document.getElementById("age_max");
+        var a=txt.value;
+        a++;
+        txt.value=a;
+    }
+    function sub(){
+        var txt=document.getElementById("age_max");
+        var a=txt.value;
+        if(a>1){
+            a--;
+            txt.value=a;
+        }else{
+            txt.value=1;
+        }
+    }
+    function add2(){
+        var txt=document.getElementById("age_min");
+        var a=txt.value;
+        a++;
+        txt.value=a;
+    }
+    function sub2(){
+        var txt=document.getElementById("age_min");
+        var a=txt.value;
+        if(a>1){
+            a--;
+            txt.value=a;
+        }else{
+            txt.value=1;
+        }
+    }
+
+   var app = angular.module('myapp', []);
+app.controller('orderByCtrl', function($scope) {
+  $scope.col = 'name';//默认按name列排序
+  $scope.desc = 0;//默认排序条件升序
+  $scope.data = [{
+    name: 'name 1',
+    species: 'Fish',
+    exhibit: 'Pacific',
+    age: 3,
+    type: 'Fish'
+  }, {
+    name: 'name 2',
+    species: 'Fish',
+    exhibit: 'Pacific',
+    age: 4,
+    type: 'Submarine'
+  }, {
+    name: 'name 3',
+    species: 'Insects',
+    exhibit: 'Land',
+    age: 5,
+    type: 'Insects'
+  }, {
+    name: 'name 4',
+    species: 'Sheep',
+    exhibit: 'Forest',
+    age: 2,
+    type: 'Sheep'
+  }];
+})
+</script>
+
 
 <body>
 <div id="header">
@@ -104,21 +170,13 @@
 </div>
 
 <div id="nav">
-    <input action="" method="POST">
-        {{ form.name.label }}
+    <form action="" method="POST">
 
+        {{ form.name.label }}
         <div class="input">
-            {% if form.name.errors %}
-                    {{ form.name }}
-                    <div class="invalid-feedback">
-                        {% for error in form.name.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.name }}
-                {% endif %}
+            {{ form.name }}
         </div>
+
         {{ form.species.label }}
         <div class="input">
             {{ form.species }}
@@ -129,17 +187,13 @@
         </div>
         Age: <br>
         {{ form.age_max.label }} <input type="button" onclick="add()" value="+">
-         <input type="text" id="txt" value="1">
+        <input name="age_max" id="age_max" value="10">
 
-{#        <div class="input" type="text" id="txt" value="1">#}
-{#            {{ form.age_max }}#}
-{#        </div>#}
         <input type="button" onclick="sub()" value="-"></td><br>
 
         {{ form.age_min.label }} <input type="button" onclick="add2()" value="+">
-        <div class="input" type="text" id="txt" value="1">
-            {{ form.age_min }}
-        </div>
+        <input name="age_min" id="age_min" value="1">
+
         <input type="button" onclick="sub2()" value="-"></td><br>
         {{ form.type.label }}
         <div class="select">
@@ -150,14 +204,11 @@
         </div>
     </form>
     {{ table }}
-    <form>
-        <div class="input">
-            {{ form.remove_animal }}
-        </div>
-    </form>
 
 </div>
-    <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
+<a href="{{ url_for('admin') }}">
+    <button type="button">Back</button>
+</a>
 
 </body>
 </html>

@@ -78,6 +78,7 @@ class SearchAnimalForm(FlaskForm):
     type = SelectField('Type', choices=type_choices)
     search = SubmitField('Search')
 
+
 class AdminSearchAnimalForm(FlaskForm):
     name = StringField('Name')
     species = StringField('Species')
@@ -103,6 +104,7 @@ class RemoveForm(FlaskForm):
 
 
 
+
 class AddShowForm(FlaskForm):
     name = StringField('Name')
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
@@ -113,10 +115,11 @@ class AddShowForm(FlaskForm):
     # def __init__(self, staff):
     #     pass
 
+
 class SearchShowsForm(FlaskForm):
     name = StringField('Name')
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
-    date = DateField('Date', format='%m/%d/%Y')
+    date = DateTimeField('Date', format='%Y-%m-%d %H:%M:%S')
     search = SubmitField('Search')
     log_visit = SubmitField('Log Visit')
 
@@ -144,7 +147,7 @@ class AnimalDetail(FlaskForm):
     type = StringField('Type')
 
 
-class AnimalCare(FlaskForm):
+class AnimalCareForm(FlaskForm):
     name = StringField('Name')
     species = StringField('Species')
     age = StringField('Age')

@@ -3,248 +3,256 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 
 <style>
-#header{
-	background-color: black;
-	color:white; 
-	text-align:center;
-	padding: 3px;
-}
+    #header {
+        background-color: black;
+        color: white;
+        text-align: center;
+        padding: 3px;
+    }
 
-#nav {
-    line-height:30px;
-    background-color:#eeeeee;
-   /* text-align:center;*/
-    height:600px;
-    width: 1000px;
-    float:left;
-    padding:3px; 
+    #nav {
+        line-height: 30px;
+        background-color: #eeeeee;
+        /* text-align:center;*/
+        height: 600px;
+        width: 1000px;
+        float: left;
+        padding: 3px;
 
-}
+    }
 
-#table, td, th
-  {
-  border:1px solid black;
-  }
+    #table, td, th {
+        border: 1px solid black;
+    }
 
-th
-  {
-  background-color:black;
-  color:white;
-  }
+    th {
+        background-color: black;
+        color: white;
+    }
 
-.item-amount {
-  width: 110px;
-  height: 30px;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-}
-.item-amount a {
-  display: block;
-  height: 28px;
-  width: 30px;
-  border: 1px solid #ccc;
-  background: #f0f0f0;
-  text-align: center;
-  text-decoration: none;
-  line-height: 28px;
-  color: #444;
-  position: absolute;
-  top: 0;
-}
-.item-amount .minus,.item-amount .no-minus {
-  border-radius: 5px 0 0 5px;
-  left: 0;
-}
-.item-amount .plus,.item-amount .no-plus {
-  border-radius: 0 5px 5px 0;
-  right: 0;
-}
-.item-amount .no-minus,.item-amount .no-plus {
-  color: #EAEAEA;
-  border-color: #EAEAEA;
-  background-color: #F7F6F6;
-}
-.item-amount .minus:hover, .item-amount .plus:hover {
-  border-color: #acacac;
-  background-color: #eaeaea;
-}
-.item-amount .no-minus:hover, .item-amount .no-plus:hover {
-  color: #EAEAEA;
-  border-color: #EAEAEA;
-  background-color: #F7F6F6;
-  cursor: default;
-}
-.text-amount {
-  width: 46px;
-  height: 26px;
-  line-height: 30px;
-  border-width: 1px 0;
-  border-style: solid;
-  border-color: #ccc;
-  text-align: center;
-  background-color: #fff;
-  z-index: 2;
-  left: 32px;
-  top: 0;
-  font-size:12px;
-}
+    .item-amount {
+        width: 110px;
+        height: 30px;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+    }
+
+    .item-amount a {
+        display: block;
+        height: 28px;
+        width: 30px;
+        border: 1px solid #ccc;
+        background: #f0f0f0;
+        text-align: center;
+        text-decoration: none;
+        line-height: 28px;
+        color: #444;
+        position: absolute;
+        top: 0;
+    }
+
+    .item-amount .minus, .item-amount .no-minus {
+        border-radius: 5px 0 0 5px;
+        left: 0;
+    }
+
+    .item-amount .plus, .item-amount .no-plus {
+        border-radius: 0 5px 5px 0;
+        right: 0;
+    }
+
+    .item-amount .no-minus, .item-amount .no-plus {
+        color: #EAEAEA;
+        border-color: #EAEAEA;
+        background-color: #F7F6F6;
+    }
+
+    .item-amount .minus:hover, .item-amount .plus:hover {
+        border-color: #acacac;
+        background-color: #eaeaea;
+    }
+
+    .item-amount .no-minus:hover, .item-amount .no-plus:hover {
+        color: #EAEAEA;
+        border-color: #EAEAEA;
+        background-color: #F7F6F6;
+        cursor: default;
+    }
+
+    .text-amount {
+        width: 46px;
+        height: 26px;
+        line-height: 30px;
+        border-width: 1px 0;
+        border-style: solid;
+        border-color: #ccc;
+        text-align: center;
+        background-color: #fff;
+        z-index: 2;
+        left: 32px;
+        top: 0;
+        font-size: 12px;
+    }
 
 </style>
 <script>
-    function add(){
-        var txt=document.getElementById("txt");
-        var a=txt.value;
+    function add() {
+        var txt = document.getElementById("animal_max");
+        var a = txt.value;
         a++;
-        txt.value=a;
+        txt.value = a;
     }
-    function sub(){
-        var txt=document.getElementById("txt");
-        var a=txt.value;
-        if(a>1){
+
+    function sub() {
+        var txt = document.getElementById("animal_max");
+        var a = txt.value;
+        if (a > 1) {
             a--;
-            txt.value=a;
-        }else{
-            txt.value=1;
-        }
-    }
-    function add2(){
-        var txt=document.getElementById("txt2");
-        var a=txt.value;
-        a++;
-        txt.value=a;
-    }
-    function sub2(){
-        var txt=document.getElementById("txt2");
-        var a=txt.value;
-        if(a>1){
-            a--;
-            txt.value=a;
-        }else{
-            txt.value=1;
-        }
-    }
-    function add3(){
-        var txt=document.getElementById("txt");
-        var a=txt.value;
-        a++;
-        txt.value=a;
-    }
-    function sub3(){
-        var txt=document.getElementById("txt");
-        var a=txt.value;
-        if(a>1){
-            a--;
-            txt.value=a;
-        }else{
-            txt.value=1;
-        }
-    }
-    function add4(){
-        var txt=document.getElementById("txt2");
-        var a=txt.value;
-        a++;
-        txt.value=a;
-    }
-    function sub4(){
-        var txt=document.getElementById("txt2");
-        var a=txt.value;
-        if(a>1){
-            a--;
-            txt.value=a;
-        }else{
-            txt.value=1;
+            txt.value = a;
+        } else {
+            txt.value = 1;
         }
     }
 
-   var app = angular.module('myapp', []);
-app.controller('orderByCtrl', function($scope) {
-  $scope.col = 'name';//默认按name列排序
-  $scope.desc = 0;//默认排序条件升序
-  $scope.data = [{
-    name: 'name 1',
-    species: 'Fish',
-    exhibit: 'Pacific',
-    age: 3,
-    type: 'Fish'
-  }, {
-    name: 'name 2',
-    species: 'Fish',
-    exhibit: 'Pacific',
-    age: 4,
-    type: 'Submarine'
-  }, {
-    name: 'name 3',
-    species: 'Insects',
-    exhibit: 'Land',
-    age: 5,
-    type: 'Insects'
-  }, {
-    name: 'name 4',
-    species: 'Sheep',
-    exhibit: 'Forest',
-    age: 2,
-    type: 'Sheep'
-  }];
-})
+    function add2() {
+        var txt = document.getElementById("animal_min");
+        var a = txt.value;
+        a++;
+        txt.value = a;
+    }
+
+    function sub2() {
+        var txt = document.getElementById("animal_min");
+        var a = txt.value;
+        if (a > 1) {
+            a--;
+            txt.value = a;
+        } else {
+            txt.value = 1;
+        }
+    }
+
+    function add3() {
+        var txt = document.getElementById("size_max");
+        var a = txt.value;
+        a++;
+        txt.value = a;
+    }
+
+    function sub3() {
+        var txt = document.getElementById("size_max");
+        var a = txt.value;
+        if (a > 1) {
+            a--;
+            txt.value = a;
+        } else {
+            txt.value = 1;
+        }
+    }
+
+    function add4() {
+        var txt = document.getElementById("size_min");
+        var a = txt.value;
+        a++;
+        txt.value = a;
+    }
+
+    function sub4() {
+        var txt = document.getElementById("size_min");
+        var a = txt.value;
+        if (a > 1) {
+            a--;
+            txt.value = a;
+        } else {
+            txt.value = 1;
+        }
+    }
+
+    var app = angular.module('myapp', []);
+    app.controller('orderByCtrl', function ($scope) {
+        $scope.col = 'name';//默认按name列排序
+        $scope.desc = 0;//默认排序条件升序
+        $scope.data = [{
+            name: 'name 1',
+            species: 'Fish',
+            exhibit: 'Pacific',
+            age: 3,
+            type: 'Fish'
+        }, {
+            name: 'name 2',
+            species: 'Fish',
+            exhibit: 'Pacific',
+            age: 4,
+            type: 'Submarine'
+        }, {
+            name: 'name 3',
+            species: 'Insects',
+            exhibit: 'Land',
+            age: 5,
+            type: 'Insects'
+        }, {
+            name: 'name 4',
+            species: 'Sheep',
+            exhibit: 'Forest',
+            age: 2,
+            type: 'Sheep'
+        }];
+    })
 </script>
 
 <body>
 <div id="header">
-<h1>Atlanta Zoo</h1>
-<h1>Exhibits</h1>
+    <h1>Atlanta Zoo</h1>
+    <h1>Exhibits</h1>
 </div>
 
 <div id="nav">
-<form action="" method="POST">
-  {{form.name.label}}
-  <div class="input" type="text" id="txt">
-    {{form.name}}
-  </div>
-  Num Animals: <br>
-  {{form.animal_max.label}}
-  <input type="button" onclick="add()" value="+">
-  <div class="input" type="text" id="txt" value="1">
-    {{form.animal_max}}
-  </div>
-<input type="button" onclick="sub()" value="-"></td><br>
+    <form action="" method="POST">
 
-{{form.animal_min.label}}
-  <input type="button" onclick="add2()" value="+">
-  <div class="input" type="text" id="txt" value="1">
-    {{form.animal_min}}
-  </div>
-<input type="button" onclick="sub2()" value="-"></td><br>
+        {{ form.name.label }}
+        <div class="input" type="text" id="txt">
+            {{ form.name }}
+        </div>
+        Num Animals: <br>
+        {{ form.animal_max.label }}
+        <input type="button" onclick="add()" value="+">
+        <input type="text" id="animal_max" name="animal_max" value="200">
+        <input type="button" onclick="sub()" value="-"></td><br>
 
-Size: <br>
-  {{form.size_max.label}}
-  <input type="button" onclick="add3()" value="+">
-  <div class="input" type="text" id="txt" value="1">
-    {{form.size_max}}
-  </div>
-<input type="button" onclick="sub3()" value="-"></td><br>
+        {{ form.animal_min.label }}
+        <input type="button" onclick="add2()" value="+">
+        <input type="text" id="animal_min" name="animal_min" value="1">
 
-{{form.size_min.label}}
-  <input type="button" onclick="add4()" value="+">
-  <div class="input" type="text" id="txt" value="1">
-    {{form.size_min}}
-  </div>
-<input type="button" onclick="sub4()" value="-"></td><br>
+        <input type="button" onclick="sub2()" value="-"></td><br>
 
-  {{form.water_feature.label}}
-  <div>
-    {{form.water_feature}}
-  </div>
+        Size: <br>
+        {{ form.size_max.label }}
+        <input type="button" onclick="add3()" value="+">
+        <input type="text" id="size_max" name="size_max" value="1000">
+        <input type="button" onclick="sub3()" value="-"></td><br>
 
-  <div class = "input">
-       {{ form.search }}
-     </div>
-</form>
+        {{ form.size_min.label }}
+        <input type="button" onclick="add4()" value="+">
+        <input type="text" id="size_min" name="size_min" value="500">
+        <input type="button" onclick="sub4()" value="-"></td><br>
 
-{{table}}
+        {{ form.water_feature.label }}
+        <div>
+            {{ form.water_feature }}
+        </div>
+
+        <div class="input">
+            {{ form.search }}
+        </div>
+    </form>
+
+    {{ table }}
 
 </div>
-    <a href="{{url_for('visitor')}}"><button type="button">Back</button></a>
+<a href="{{ url_for('visitor') }}">
+    <button type="button">Back</button>
+</a>
 
 </body>
 </html>
