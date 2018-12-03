@@ -6,8 +6,10 @@ from pymysql.err import IntegrityError
 from LoginDemoApp.table import *
 import hashlib
 import datetime
-import tkinter
-import tkinter.messagebox
+
+
+# import tkinter
+# import tkinter.messagebox
 
 
 @app.route("/")
@@ -213,25 +215,40 @@ def visitor_search_exhibit():
             if name:
                 if size_min and size_max:
                     if animal_min and animal_max:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, name, size_min, size_max, animal_min, animal_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
+                                water_feature, name, size_min, size_max, animal_min, animal_max)]
                     else:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, name, size_min, size_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (
+                                water_feature, name, size_min, size_max)]
                 else:
                     if animal_min and animal_max:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, name, animal_min, animal_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
+                                water_feature, name, animal_min, animal_max)]
                     else:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, name)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name' % (
+                                water_feature, name)]
             else:
                 if size_min and size_max:
                     if animal_min and animal_max:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, size_min, size_max, animal_min, animal_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
+                                water_feature, size_min, size_max, animal_min, animal_max)]
                     else:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, size_min, size_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (
+                                water_feature, size_min, size_max)]
                 else:
                     if animal_min and animal_max:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, animal_min, animal_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
+                                water_feature, animal_min, animal_max)]
                     else:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' % water_feature]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' % water_feature]
             query = query[0]
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
             cur = db.get_db().cursor()
@@ -256,29 +273,44 @@ def visitor_search_exhibit():
             if name:
                 if size_min and size_max:
                     if animal_min and animal_max:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, name, size_min, size_max, animal_min, animal_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
+                                water_feature, name, size_min, size_max, animal_min, animal_max)]
                     else:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, name, size_min, size_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (
+                                water_feature, name, size_min, size_max)]
                 else:
                     if animal_min and animal_max:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, name, animal_min, animal_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
+                                water_feature, name, animal_min, animal_max)]
                     else:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, name)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name' % (
+                                water_feature, name)]
             else:
                 if size_min and size_max:
                     if animal_min and animal_max:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, size_min, size_max, animal_min, animal_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
+                                water_feature, size_min, size_max, animal_min, animal_max)]
                     else:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (water_feature, size_min, size_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (
+                                water_feature, size_min, size_max)]
                 else:
                     if animal_min and animal_max:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (water_feature, animal_min, animal_max)]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
+                                water_feature, animal_min, animal_max)]
                     else:
-                        query = ['SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' % water_feature]
+                        query = [
+                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' % water_feature]
             query = query[0]
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
             cur = db.get_db().cursor()
-            print("tag2",query)
+            print("tag2", query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitsTable(
@@ -422,16 +454,16 @@ def visitor_exhibit_history():
     cur = db.get_db().cursor()
     if form.is_submitted():
         if form.sort.data:
-            name = request.cookies.get("visitor_exhibit_history_name") if request.cookies.get("visitor_exhibit_history_name") else form.name.data
-            date = request.cookies.get("visitor_exhibit_history_date") if request.cookies.get("visitor_exhibit_history_date") else form.date.data
-            visit_num_max = request.cookies.get("visitor_exhibit_history_visit_num_max") if request.cookies.get("visitor_exhibit_history_visit_num_max") else form.visit_num_max.data
-            visit_num_min = request.cookies.get("visitor_exhibit_history_visit_num_min") if request.cookies.get("visitor_exhibit_history_visit_num_min") else form.visit_num_min.data
-            # name = form.name.data
-            # date = form.date.data
-            # visit_num_max = form.visit_num_max.data
-            # visit_num_min = form.visit_num_min.data
-            # # cur.execute('create view exhibit_count as select Username, Exhibitname, Datetime, count(Exhibitname) as c from VisitExhibit group by Exhibitname, Username;')
-            query = 'select V.Exhibitname, V.Datetime, C.c from VisitExhibit as V, exhibit_count as C where C.Username = V.Username and C.Exhibitname = V.Exhibitname and V.Username = "%s"' % (current_user.username)
+            name = request.cookies.get("visitor_exhibit_history_name") if request.cookies.get(
+                "visitor_exhibit_history_name") else form.name.data
+            date = request.cookies.get("visitor_exhibit_history_date") if request.cookies.get(
+                "visitor_exhibit_history_date") else form.date.data
+            visit_num_max = request.cookies.get("visitor_exhibit_history_visit_num_max") if request.cookies.get(
+                "visitor_exhibit_history_visit_num_max") else form.visit_num_max.data
+            visit_num_min = request.cookies.get("visitor_exhibit_history_visit_num_min") if request.cookies.get(
+                "visitor_exhibit_history_visit_num_min") else form.visit_num_min.data
+            query = 'select V.Exhibitname, V.Datetime, C.c from VisitExhibit as V, exhibit_count as C where C.Username = V.Username and C.Exhibitname = V.Exhibitname and V.Username = "%s"' % (
+                current_user.username)
             if name:
                 query += ' AND V.Exhibitname = "%s"' % name
             if date:
@@ -474,7 +506,7 @@ def visitor_exhibit_history():
             if name:
                 res.set_cookie("visitor_exhibit_history_name", name)
             else:
-                res.set_cookie("visitor_exhibit_history_name", expires = 0)
+                res.set_cookie("visitor_exhibit_history_name", expires=0)
             if date:
                 res.set_cookie("visitor_exhibit_history_date", str(date))
             else:
@@ -503,7 +535,8 @@ def visitor_show_history():
                 "visitor_show_history_time") else None
             exhibit = request.cookies.get("visitor_show_history_exhibit")
             query = [
-                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE Shows.Name = VisitShow.Showname AND VisitShow.Showdate = Shows.DateAndTime AND Shows.LocateAt = "%s" AND Username = "%s"' % (exhibit, current_user.username)]
+                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE Shows.Name = VisitShow.Showname AND VisitShow.Showdate = Shows.DateAndTime AND Shows.LocateAt = "%s" AND Username = "%s"' % (
+                    exhibit, current_user.username)]
             if time:
                 query.append('VisitShow.Showdate = "%s"' % time)
             if name:
@@ -522,7 +555,8 @@ def visitor_show_history():
             time = form.date.data
             exhibit = form.exhibit.data
             query = [
-                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE Shows.Name = VisitShow.Showname AND VisitShow.Showdate = Shows.DateAndTime AND Shows.LocateAt = "%s" AND Username = "%s"' % (exhibit, current_user.username)]
+                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE Shows.Name = VisitShow.Showname AND VisitShow.Showdate = Shows.DateAndTime AND Shows.LocateAt = "%s" AND Username = "%s"' % (
+                    exhibit, current_user.username)]
             if time:
                 query.append('VisitShow.Showdate = "%s"' % time)
             if name:
@@ -738,7 +772,11 @@ def admin_view_show():
         if form.sort.data:
             name = request.cookies.get("admin_view_show_name") if request.cookies.get("admin_view_show_name") else None
             date = request.cookies.get("admin_view_show_date") if request.cookies.get("admin_view_show_date") else None
-            exhibit = form.exhibit.data
+            exhibit = request.cookies.get("admin_view_show_exhibit") if request.cookies.get(
+                "admin_view_show_exhibit") else None
+            form.name.data = name
+            form.exhibit.data = exhibit
+            form.date.data = date
             query = ['SELECT Name, DateAndTime, LocateAt FROM Shows WHERE LocateAt = "%s"' % exhibit]
             if name:
                 query.append('Name = "%s"' % name)
@@ -767,7 +805,29 @@ def admin_view_show():
                 res.set_cookie("admin_view_show_name", name)
             if date:
                 res.set_cookie("admin_view_show_date", date)
+            if exhibit:
+                res.set_cookie("admin_view_show_exhibit", exhibit)
             return res
+    if request.cookies.get("admin_just_delete_show"):
+        name = request.cookies.get("admin_view_show_name") if request.cookies.get("admin_view_show_name") else None
+        date = request.cookies.get("admin_view_show_date") if request.cookies.get("admin_view_show_date") else None
+        exhibit = request.cookies.get("admin_view_show_exhibit") if request.cookies.get(
+            "admin_view_show_exhibit") else None
+        form.name.data = name
+        form.exhibit.data = exhibit
+        form.date.data = date
+        query = ['SELECT Name, DateAndTime, LocateAt FROM Shows WHERE LocateAt = "%s"' % exhibit]
+        if name:
+            query.append('Name = "%s"' % name)
+        if date:
+            query.append('DateAndTime = "%s"' % date)
+        query = " AND ".join(query)
+        cur.execute(query)
+        fetch = cur.fetchall()
+        table = ShowsTable([Show(a, b, c) for a, b, c in fetch])
+        res = make_response(render_template('admin_view_show.html', form=form, table=table))
+        res.set_cookie("admin_just_delete_show", expires=0)
+        return res
     return render_template("admin_view_show.html", table=table, form=form)
 
 
@@ -775,15 +835,26 @@ def admin_view_show():
 @app.route("/admin_view_animal", methods=['GET', 'POST'])
 def admin_view_animal():
     form = SearchAnimalForm()
-    name = request.cookies.get("admin_view_animal_name") if request.cookies.get( "admin_view_animal_name") else None
-    species = request.cookies.get("admin_view_animal_species") if request.cookies.get("admin_view_animal_species") else None
-    age_min = request.cookies.get("admin_view_animal_age_min") if request.cookies.get("admin_view_animal_age_min") else None
-    age_max = request.cookies.get("admin_view_animal_age_max") if request.cookies.get("admin_view_animal_age_max") else None
     if form.is_submitted():
-        print(form.search.data)
         if form.sort.data:
-            exhibit = form.exhibit.data
-            type = form.type.data
+            name = request.cookies.get("admin_view_animal_name") if request.cookies.get(
+                "admin_view_animal_name") else None
+            species = request.cookies.get("admin_view_animal_species") if request.cookies.get(
+                "admin_view_animal_species") else None
+            age_min = request.cookies.get("admin_view_animal_age_min") if request.cookies.get(
+                "admin_view_animal_age_min") else None
+            age_max = request.cookies.get("admin_view_animal_age_max") if request.cookies.get(
+                "admin_view_animal_age_max") else None
+            exhibit = request.cookies.get("admin_view_animal_exhibit") if request.cookies.get(
+                "admin_view_animal_exhibit") else None
+            type = request.cookies.get("admin_view_animal_type") if request.cookies.get(
+                "admin_view_animal_type") else None
+            form.name.data = name
+            form.species.data = species
+            form.age_min.data = age_min
+            form.age_max.data = age_max
+            form.exhibit.data = exhibit
+            form.type.data = type
             query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
             if name:
                 query.append('Name = "%s"' % name)
@@ -801,6 +872,7 @@ def admin_view_animal():
             fetch = cur.fetchall()
             table = AnimalTableDelete([AnimalDelete(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
             res = make_response(render_template('admin_view_animal.html', form=form, table=table))
+            # res.set_cookie("admin_just_delete_animal", expires=0)
             return res
         elif form.search.data:
             name = form.name.data
@@ -828,9 +900,47 @@ def admin_view_animal():
             res.set_cookie("admin_view_animal_species", species)
             res.set_cookie("admin_view_animal_age_min", age_min)
             res.set_cookie("admin_view_animal_age_max", age_max)
-            # res.set_cookie("admin_view_animal_exhibit", exhibit)
-            # res.set_cookie("admin_view_animal_type", type)
+            res.set_cookie("admin_view_animal_exhibit", exhibit)
+            res.set_cookie("admin_view_animal_type", type)
             return res
+    if request.cookies.get("admin_just_delete_animal"):
+        print("just delete")
+        if request.cookies.get("admin_view_animal_name"):
+            form.name.data = request.cookies.get("admin_view_animal_name")
+        if request.cookies.get("admin_view_animal_species"):
+            form.species.data = request.cookies.get("admin_view_animal_species")
+        if request.cookies.get("admin_view_animal_age_min"):
+            form.age_min.data = request.cookies.get("admin_view_animal_age_min")
+        if request.cookies.get("admin_view_animal_age_max"):
+            form.age_min.data = request.cookies.get("admin_view_animal_age_max")
+        if request.cookies.get("admin_view_animal_exhibit"):
+            form.exhibit.data = request.cookies.get("admin_view_animal_exhibit")
+        if request.cookies.get("admin_view_animal_type"):
+            form.type.data = request.cookies.get("admin_view_animal_type")
+        name = form.name.data
+        species = form.species.data
+        age_min = form.age_min.data
+        age_max = form.age_max.data
+        exhibit = form.exhibit.data
+        type = form.type.data
+        query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
+        if name:
+            query.append('Name = "%s"' % name)
+        if species:
+            query.append('Species = "%s"' % species)
+        if age_min:
+            query.append('Age >= "%s"' % age_min)
+        if age_max:
+            query.append('Age <= "%s"' % age_max)
+        query = " AND ".join(query)
+        cur = db.get_db().cursor()
+        print("-" * 5, query)
+        cur.execute(query)
+        fetch = cur.fetchall()
+        table = AnimalTableDelete([AnimalDelete(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
+        res = make_response(render_template('admin_view_animal.html', form=form, table=table))
+        res.set_cookie("admin_just_delete_animal", expires=0)
+        return res
     return render_template("admin_view_animal.html", form=form)
 
 
@@ -879,8 +989,10 @@ def admin_add_show():
 def showdelete(id, id1):
     cur = db.get_db().cursor()
     cur.execute('Delete FROM Shows where Name=%s and DateAndTime=%s', (id, id1))
-    # flash("Delete successful")
-    return redirect(url_for("admin_view_show"))
+    flash("Delete successful")
+    res = redirect(url_for("admin_view_show"))
+    res.set_cookie("admin_just_delete_show", "1")
+    return res
 
 
 @login_required
@@ -888,7 +1000,10 @@ def showdelete(id, id1):
 def delete_animal(id, id1):
     cur = db.get_db().cursor()
     cur.execute('Delete FROM Animal where Name=%s and Species=%s', (id, id1))
-    return redirect(url_for("admin_view_animal"))
+    flash("Delete successful")
+    res = redirect(url_for("admin_view_animal"))
+    res.set_cookie("admin_just_delete_animal", "1")
+    return res
 
 
 @login_required
@@ -908,6 +1023,7 @@ def staffdelete(id):
     cur.execute('Delete FROM User where Username=%s', id)
     return redirect(url_for('admin_view_staff'))
 
+
 @login_required
 @app.route("/visitor_visit_show/<string:id>/<string:id1>/<string:id2>", methods=['GET', 'POST'])
 def visitor_visit_show(id, id1, id2):
@@ -917,8 +1033,10 @@ def visitor_visit_show(id, id1, id2):
     print(id2, type(id2))
     if id2 <= curr_time:
         try:
-            cur.execute('INSERT INTO VisitShow (Username, Showname, Showdate) VALUES (%s, %s, %s)',(current_user.username, id1, id2))
-            cur.execute('INSERT INTO VisitExhibit (Username, Exhibitname, Datetime) VALUES (%s, %s, %s)', (current_user.username, id, id2))
+            cur.execute('INSERT INTO VisitShow (Username, Showname, Showdate) VALUES (%s, %s, %s)',
+                        (current_user.username, id1, id2))
+            cur.execute('INSERT INTO VisitExhibit (Username, Exhibitname, Datetime) VALUES (%s, %s, %s)',
+                        (current_user.username, id, id2))
             flash("Log successful")
             print("log successful")
         except IntegrityError as e:
@@ -928,6 +1046,7 @@ def visitor_visit_show(id, id1, id2):
         flash("Failed to log show. Too early!")
         print("Failed to log show")
     return redirect(url_for("visitor_search_show"))
+
 
 def visitor_visit_exhbit():
     pass
