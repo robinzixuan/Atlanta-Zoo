@@ -5,7 +5,7 @@
 <style>
 #header{
 	background-color: black;
-	color:white; 
+	color:white;
 	text-align:center;
 	padding: 3px;
 }
@@ -17,7 +17,7 @@
     height:600px;
     width: 1000px;
     float:left;
-    padding:3px; 
+    padding:3px;
 
 }
 
@@ -95,51 +95,46 @@ th
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>Animals</h1>
+<h1>Animal Detail</h1>
 </div>
 
 <div id="nav">
-<form action="form_action.asp" method="get">
-  {{ form.name.label }}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
+<form action="" method="POST">
+  {{form.name.label}}: {{form.name.data}}
+  {{form.species.label}}: {{form.species.data}}
+  {{form.age.label}}: {{form.age.data}}
+  {{form.exhibit.label}}: {{form.exhibit.data}}
+  {{form.type.label}}: {{form.type.data}}
+  <div class="input" type="text" id="txt">
+    Notes: {{form.notes}}
+  </div>
   <div class="input">
-    {{form.name}}
-  </div>
-  {{ form.species.label}}
-  <div class = "input">
-    {{form.species}}
-  </div>
-  {{form.exhibit.label}}
-  <div class = "select">
-    {{form.exhibit}}
-  </div>
-  Age: <br>
-  {{form.age_max.label}} <input type="button" onclick="add()" value="+">
-  <div class = "input" type="text" id="txt" value="1">
-    {{form.age_max}}
-  </div>
-  <input type="button" onclick="sub()" value="-"></td><br>
-
-{{form.age_min.label}} <input type="button" onclick="add2()" value="+">
-  <div class = "input" type="text" id="txt" value="1">
-    {{form.age_min}}
-  </div>
-  <input type="button" onclick="sub2()" value="-"></td><br>
-  {{form.type.label}}
-  <div class = "select">
-    {{form.type}}
-  </div>
-<div class = "input"> 
-       {{ form.search }}
+            {{ form.sort }}
 </div>
+<div class="select">
+            {{ form.by }}
+</div>
+<div class="select">
+            {{ form.direction }}
+</div>
+   <div class="input">
+                {{ form.log_notes }}
+            </div>
+
 </form>
 {{table}}
-<form>
-   <div class = "input"> 
-       {{ form.remove_animal }}
-     </div>
-</form>
 
 </div>
+    <a href="{{url_for('staff')}}"><button type="button">Back</button></a>
 
 </body>
 </html>

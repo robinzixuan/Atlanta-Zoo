@@ -96,11 +96,79 @@
     }
 
 </style>
+<script>
+    function add() {
+        var txt = document.getElementById("txt");
+        var a = txt.value;
+        a++;
+        txt.value = a;
+    }
+
+    function sub() {
+        var txt = document.getElementById("txt");
+        var a = txt.value;
+        if (a > 1) {
+            a--;
+            txt.value = a;
+        } else {
+            txt.value = 1;
+        }
+    }
+
+    function add2() {
+        var txt = document.getElementById("txt2");
+        var a = txt.value;
+        a++;
+        txt.value = a;
+    }
+
+    function sub2() {
+        var txt = document.getElementById("txt2");
+        var a = txt.value;
+        if (a > 1) {
+            a--;
+            txt.value = a;
+        } else {
+            txt.value = 1;
+        }
+    }
+
+    var app = angular.module('myapp', []);
+    app.controller('orderByCtrl', function ($scope) {
+        $scope.col = 'name';//默认按name列排序
+        $scope.desc = 0;//默认排序条件升序
+        $scope.data = [{
+            name: 'name 1',
+            species: 'Fish',
+            exhibit: 'Pacific',
+            age: 3,
+            type: 'Fish'
+        }, {
+            name: 'name 2',
+            species: 'Fish',
+            exhibit: 'Pacific',
+            age: 4,
+            type: 'Submarine'
+        }, {
+            name: 'name 3',
+            species: 'Insects',
+            exhibit: 'Land',
+            age: 5,
+            type: 'Insects'
+        }, {
+            name: 'name 4',
+            species: 'Sheep',
+            exhibit: 'Forest',
+            age: 2,
+            type: 'Sheep'
+        }];
+    })
+</script>
 
 <body>
 <div id="header">
     <h1>Atlanta Zoo</h1>
-    <h1>Animal Detail</h1>
+    <h1>Staff-Show History</h1>
 </div>
 
 <div id="nav">
@@ -114,16 +182,24 @@
         {% endif %}
     {% endwith %}
     <form action="" method="POST">
-        {{ form.name.label }} : {{ form.name.data }}<br>
-        {{ form.species.label }} : {{ form.species.data }}<br>
-        {{ form.age.label }} : {{ form.age.data }}<br>
-        {{ form.exhibit.label }} :{{ form.exhibit.data }}<br>
-        {{ form.type.label }} : {{ form.type.data }}<br>
+
+        <div class="select">
+            {{ form.by }}
+        </div>
+        <div class="select">
+            {{ form.direction }}
+        </div>
+        <div class="input">
+            {{ form.sort }}
+        </div>
     </form>
 
+    {{ table }}
+
 </div>
-<a href="{{ url_for('visitor_search_animal') }}">
+<a href="{{ url_for('staff') }}">
     <button type="button">Back</button>
 </a>
+
 </body>
 </html>

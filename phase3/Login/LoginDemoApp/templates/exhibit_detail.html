@@ -5,7 +5,7 @@
 <style>
 #header{
 	background-color: black;
-	color:white; 
+	color:white;
 	text-align:center;
 	padding: 3px;
 }
@@ -17,7 +17,7 @@
     height:600px;
     width: 1000px;
     float:left;
-    padding:3px; 
+    padding:3px;
 
 }
 
@@ -99,20 +99,39 @@ th
 </div>
 
 <div id="nav">
-<form action="form_action.asp" method="get">
-  {{form.name.label}}
-  {{form.size.label}}
-  {{form.num_animals.label}}
-  {{form.water_feature.label}}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
+<form action="" method="POST">
+  {{form.name.label}}: {{form.name.data}} <br>
+  {{form.size.label}}: {{form.size.data}}<br>
+  {{form.num_animals.label}}: {{form.num_animals.data}}<br>
+  {{form.water_feature.label}}: {{form.water_feature.data}}<br>
+    <div class="input">
+            {{ form.sort }}
+        </div>
+        <div class="select">
+            {{ form.by }}
+        </div>
+        <div class="select">
+            {{ form.direction }}
+        </div>
+
   <div class="input">
-    {{form.log_visit}}
+    {{form.submit}}
   </div>
-  
+
 </form>
 
 {{table}}
 
 </div>
-
+<a href="{{url_for('visitor_search_exhibit')}}"><button type="button">Back</button></a>
 </body>
 </html>

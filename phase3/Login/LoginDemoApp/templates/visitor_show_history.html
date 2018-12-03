@@ -160,14 +160,50 @@ app.controller('orderByCtrl', function($scope) {
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>Staff-Show History</h1>
+<h1>Show History</h1>
 </div>
 
 <div id="nav">
-<form action="form_action.asp" method="get">
-  {{table}}
-</form>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
+<form action="" method="POST">
+  {{form.name.label}}
+  <div class="input"type="text" name="fname" >
+    {{form.name}}
+  </div>
+  {{form.exhibit.label}}
+  <div class="select">
+    {{form.exhibit}}
+  </div>
+  {{form.date.label}}
+  <div class="input" type="text">
+    {{form.date}}
+  </div>
+  <div class="input">
+            {{ form.sort }}
 </div>
+<div class="select">
+            {{ form.by }}
+</div>
+<div class="select">
+            {{ form.direction }}
+</div>
+
+  <div class = "input">
+       {{ form.search }}
+     </div>
+</form>
+
+{{table}}
+</div>
+    <a href="{{url_for('visitor')}}"><button type="button">Back</button></a>
 
 </body>
 </html>

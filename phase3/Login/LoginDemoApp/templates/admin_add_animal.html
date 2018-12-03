@@ -93,13 +93,13 @@ th
 </style>
 <script>
     function add(){
-        var txt=document.getElementById("txt");
+        var txt=document.getElementById("age");
         var a=txt.value;
         a++;
         txt.value=a;
     }
     function sub(){
-        var txt=document.getElementById("txt");
+        var txt=document.getElementById("age");
         var a=txt.value;
         if(a>1){
             a--;
@@ -160,41 +160,73 @@ app.controller('orderByCtrl', function($scope) {
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>Exhibit History</h1>
+<h1>Add Animal</h1>
 </div>
 
 <div id="nav">
-<form action="form_action.asp" method="get">
-  {{form.name.label}}
-  <div class="input"type="text" name="fname" >
-    {{form.name}}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
+<form action="" method="POST">
+       {{ form.hidden_tag() }}
+    {{ form.name.label }}
+            <div class="input">
+                   {{ form.name }}
+            </div>
+    {{ form.exhibit.label }}
+            <div class="input">
+                    {{ form.exhibit }}
+            </div>
+        {{ form.species.label }}
+            <div class="input">
+                    {{ form.species }}
+            </div>
+  {{form.type.label}}
+  <div class = "select">
+    {{form.type}}
   </div>
-  Number of Visits: <br>
-  {{form.visit_num_max.label}}
+  {{form.age.label}}
   <input type="button" onclick="add()" value="+">
-  <div class="input" type="text" id="txt" value="1">
-    {{form.visit_num_max}}
-  </div>
-<input type="button" onclick="sub()" value="-"></td><br>
-{{form.visit_num_min.label}}
-  <input type="button" onclick="add2()" value="+">
-  <div class="input" type="text" id="txt" value="1">
-    {{form.visit_num_min}}
-  </div>
-<input type="button" onclick="sub2()" value="-"></td><br>
+  <input name="age" id="age" value="1">
+  <input type="button" onclick="sub()" value="-"></td><br>
+  
+<div class = "input"> 
+       {{ form.submit }}
+</div>
+    <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
 
-  {{form.date.label}}
-  <div class="input" type="datetime-local" value="2015-09-24T13:59:59">
-    {{form.date}}
-  </div>
-  <div class = "input"> 
-       {{ form.search }}
-     </div>
+<!--   <input type="submit" value="Search" /> -->
 </form>
 
-{{table}}
+
+<!-- <table class="table table-border" ng-app="myapp" ng-controller="orderByCtrl">
+  <thead>
+    <tr>
+      <th ng-click="col='name';desc=!desc">Name</th>
+      <th ng-click="col='species';desc=!desc">Species</th>
+      <th ng-click="col='exhibit';desc=!desc">Exhibit</th>
+      <th ng-click="col='age';desc=!desc">Age</th>
+      <th ng-click="col='type';desc=!desc">Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="d in data|orderBy:col:desc">
+      <td ng-bind="d.name"></td>
+      <td ng-bind="d.species"></td>
+      <td ng-bind="d.exhibit"></td>
+      <td ng-bind="d.age"></td>
+      <td ng-bind="d.type"></td>
+
+    </tr>
+  </tbody>
+</table> -->
 
 </div>
-
 </body>
 </html>

@@ -100,8 +100,9 @@
 <body>
 <div id="header">
     <h1>Atlanta Zoo</h1>
-    <h1>Animal Detail</h1>
+    <h1>View Staff</h1>
 </div>
+
 
 <div id="nav">
     {% with messages = get_flashed_messages() %}
@@ -114,16 +115,23 @@
         {% endif %}
     {% endwith %}
     <form action="" method="POST">
-        {{ form.name.label }} : {{ form.name.data }}<br>
-        {{ form.species.label }} : {{ form.species.data }}<br>
-        {{ form.age.label }} : {{ form.age.data }}<br>
-        {{ form.exhibit.label }} :{{ form.exhibit.data }}<br>
-        {{ form.type.label }} : {{ form.type.data }}<br>
+        <div class="select">
+            {{ form.by }}
+        </div>
+        <div class="select">
+            {{ form.direction }}
+        </div>
+        <div class="select">
+            {{ form.sort }}
+        </div>
     </form>
+    {{ table }}
+
 
 </div>
-<a href="{{ url_for('visitor_search_animal') }}">
+<a href="{{ url_for('admin') }}">
     <button type="button">Back</button>
 </a>
+
 </body>
 </html>

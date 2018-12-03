@@ -5,7 +5,7 @@
 <style>
 #header{
 	background-color: black;
-	color:white; 
+	color:white;
 	text-align:center;
 	padding: 3px;
 }
@@ -17,7 +17,7 @@
     height:600px;
     width: 1000px;
     float:left;
-    padding:3px; 
+    padding:3px;
 
 }
 
@@ -160,37 +160,62 @@ app.controller('orderByCtrl', function($scope) {
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>Add Animal</h1>
+<h1>Add Show</h1>
 </div>
 
 <div id="nav">
-<form action="form_action.asp" method="get">
-  {{ form.name.label }}
-  <div class="input">
-    {{form.name}}
-  </div>
+{% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.name.label }}
+            <div class="input">
+                {% if form.name.errors %}
+                    {{ form.name }}
+                    <div class="invalid-feedback">
+                        {% for error in form.name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.name }}
+                {% endif %}
+            </div>
   {{form.exhibit.label}}
   <div class = "select">
     {{form.exhibit}}
   </div>
-  {{form.type.label}}
-  <div class = "select">
-    {{form.type}}
+  {{ form.staff.label }}
+            <div class="input">
+                {% if form.staff.errors %}
+                    {{ form.staff }}
+                    <div class="invalid-feedback">
+                        {% for error in form.staff.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.staff }}
+                {% endif %}
+            </div>
+  {{form.date.label}}
+  <div class="input" type="text">
+    {{form.date}}
   </div>
-  {{form.species.label}}
-  <div class="input">
-    {{form.species}}
-  </div>
-  {{form.age.lable}}
-  <input type="button" onclick="add()" value="+">
-  <div class = "input" type="text" id="txt" value="1">
-    {{form.age}}
-  </div>
-  <input type="button" onclick="sub()" value="-"></td><br>
-  
-<div class = "input"> 
-       {{ form.add_animal }}
+
+<div class = "input">
+       {{ form.submit }}
 </div>
+    <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
+
 <!--   <input type="submit" value="Search" /> -->
 </form>
 

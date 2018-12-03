@@ -5,7 +5,7 @@
 <style>
 #header{
 	background-color: black;
-	color:white; 
+	color:white;
 	text-align:center;
 	padding: 3px;
 }
@@ -17,7 +17,7 @@
     height:600px;
     width: 1000px;
     float:left;
-    padding:3px; 
+    padding:3px;
 
 }
 
@@ -95,17 +95,51 @@ th
 <body>
 <div id="header">
 <h1>Atlanta Zoo</h1>
-<h1>View Staff</h1>
+<h1>Shows</h1>
 </div>
 
 <div id="nav">
-    {{table}}
-<form action="form_action.asp" method="get">
-  <div class="input">
-    {{form.delete_staff}}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
+<form action="" method="POST">
+  {{form.name.label}}
+  <div class="input" type="text" id="txt">
+    {{form.name}}
   </div>
-
+  {{form.date.label}}
+  <div class="input" type="text">
+    {{form.date}}
+  </div>
+  {{form.exhibit.label}}
+    <div class="select">
+            {{ form.exhibit }}
+        </div>
+    <div class="select">
+            {{ form.type }}
+        </div>
+        <div class="input">
+            {{ form.sort }}
+        </div>
+        <div class="select">
+            {{ form.by }}
+        </div>
+        <div class="select">
+            {{ form.direction }}
+        </div>
+        <div class="input">
+            {{ form.search }}
+        </div>
 </form>
+    {{ table }}
+    <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
+
 
 </div>
 

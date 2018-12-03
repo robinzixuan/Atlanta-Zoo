@@ -26,7 +26,9 @@ app.config['MYSQL_DATABASE_USER'] = 'cs4400_group32'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'AXtzKclB'
 app.config['MYSQL_DATABASE_DB'] = 'cs4400_group32'
 app.config['MYSQL_DATABASE_HOST'] = 'academic-mysql.cc.gatech.edu'
+# global db
 db = MySQL()
+# db = MySQL()
 db.init_app(app)
 
 # Setup Bcrypt (used to hash user passwords)

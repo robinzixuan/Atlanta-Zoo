@@ -3,16 +3,13 @@
 <article class="center">
     <h1 class="main_title" style="font-size:300%;">Welcome Atlanta Zoo System</h1>
     <br>
-    <p>Hello {{current_user.username}} you are logged in</p>
+    <p>Hello {{current_user.username}} you are logged in as {{ current_user.usertype }}</p>
     <br>
     <a href="{{url_for('logout')}}"><button type="button">Log Out</button></a>
     <br>
     <a href="{{url_for('staff_search_animal')}}"><button type="button">Search Animal</button></a>
-    <p>&emsp;&emsp;&emsp;&emsp;</p>
     <a href="{{url_for('staff_view_shows')}}"><button type="button">View Shows </button></a>
     <br>
     <img src="https://res.cloudinary.com/simpleview/image/upload/w_485,h_300,c_fill/crm/atlanta/J0062709_5467bb88-5056-b3a8-49a6647c174eea06.jpg" alt="Zoo" style="width:500px;height:600px;">
-
-    
 </article>
 {% endblock content %}
