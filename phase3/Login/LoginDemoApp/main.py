@@ -393,7 +393,7 @@ def visitor_search_show():
                 res.set_cookie("visitor_search_shows_name", name)
             res.set_cookie("visitor_search_shows_exhibit", exhibit)
             if date:
-                res.set_cookie("visitor_search_shows_date", date)
+                res.set_cookie("visitor_search_shows_date", str(date))
             return res
     if request.cookies.get("visitor_just_log_show"):
         name = request.cookies.get("visitor_search_shows_name") if request.cookies.get(
