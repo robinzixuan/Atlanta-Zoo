@@ -173,7 +173,7 @@ def exhibit_detail(id):
             time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             # print('Insert INTO VisitExhibit VALUES (%s, %s, %s)' % (current_user.username, name, time))
             cur.execute('Insert INTO VisitExhibit VALUES (%s, %s, %s)', (current_user.username, name, time))
-            return redirect(url_for('visitor_search_exhibit'))
+            return redirect(url_for('visitor_exhibit_history'))
         elif form.sort.data:
             cur.execute('SELECT * FROM Animal WHERE Place = "%s" ORDER BY %s %s' % (id, form.by.data, form.direction.data))
             animals = cur.fetchall()
