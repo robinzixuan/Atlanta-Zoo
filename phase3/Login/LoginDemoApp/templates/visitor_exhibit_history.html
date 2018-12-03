@@ -164,6 +164,15 @@ app.controller('orderByCtrl', function($scope) {
 </div>
 
 <div id="nav">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
 <form action="" method="POST">
   {{form.name.label}}
   <div class="input"type="text" name="fname" >
@@ -172,18 +181,27 @@ app.controller('orderByCtrl', function($scope) {
   Number of Visits: <br>
   {{form.visit_num_max.label}}
   <input type="button" onclick="add()" value="+">
-    <input type="text" id="visit_num_max" name = "visit_num_max" value="1">
+    <input type="text" id="visit_num_max" name = "visit_num_max">
 <input type="button" onclick="sub()" value="-"></td><br>
 
 {{form.visit_num_min.label}}
   <input type="button" onclick="add2()" value="+">
-    <input type="text" id="visit_num_min" name = "visit_num_min" value="1">
+    <input type="text" id="visit_num_min" name = "visit_num_min">
 <input type="button" onclick="sub2()" value="-"></td><br>
 
   {{form.date.label}}
-  <div class="input" type="datetime-local" value="2015-09-24T13:59:59">
+  <div class="input" type="text">
     {{form.date}}
   </div>
+  <div class="input">
+            {{ form.sort }}
+</div>
+<div class="select">
+            {{ form.by }}
+</div>
+<div class="select">
+            {{ form.direction }}
+</div>
   <div class = "input">
        {{ form.search }}
      </div>

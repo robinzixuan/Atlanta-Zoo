@@ -99,6 +99,15 @@ th
 </div>
 
 <div id="nav">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
 <form action="" method="POST">
   {{form.name.label}}: {{form.name.data}}
   {{form.species.label}}: {{form.species.data}}
@@ -106,8 +115,17 @@ th
   {{form.exhibit.label}}: {{form.exhibit.data}}
   {{form.type.label}}: {{form.type.data}}
   <div class="input" type="text" id="txt">
-    {{form.notes}}
+    Notes: {{form.notes}}
   </div>
+  <div class="input">
+            {{ form.sort }}
+</div>
+<div class="select">
+            {{ form.by }}
+</div>
+<div class="select">
+            {{ form.direction }}
+</div>
    <div class="input">
                 {{ form.log_notes }}
             </div>

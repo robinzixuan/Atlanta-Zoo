@@ -7,7 +7,7 @@ from LoginDemoApp import db
 
 from LoginDemoApp.database_tables import load_user
 
-exhibit_choices = [('Pacific', 'Pacific'), ('Jungle', 'Jungle'), ('Sahara', 'Sahara'), ('Mountainous', 'Mountanious')]
+exhibit_choices = [('Pacific', 'Pacific'), ('Jungle', 'Jungle'), ('Sahara', 'Sahara'), ('Mountainous', 'Mountanious'), ("Birds", "Birds")]
 type_choices = [('Mammal', 'Mammal'), ('Fish', 'Fish'), ('Amphibian', 'Amphibian'), ('Bird', 'Bird')]
 #
 # class StaffChoices:
@@ -51,6 +51,9 @@ class SearchExhibitsForm(FlaskForm):
     water_feature = SelectField('Water Feature', choices=[('Yes', 'Yes'), ('No', 'No')])
     size_min = StringField('Min')
     size_max = StringField('Max')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Name", "Name"),("Size", "Size"),("count", "NumAnimals"),("is_water", "is_water")])
 
 
 class SearchShowHistoryForm(FlaskForm):
@@ -58,15 +61,31 @@ class SearchShowHistoryForm(FlaskForm):
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
     date = DateTimeField('Datetime', format='%Y-%m-%d %H:%M:%S')
     search = SubmitField('Search Show')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Name", "Name"),("Time", "Time"),("Exhibit", "Exhibit")])
 
+
+class AdminViewVisitorForm(FlaskForm):
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC", "ASC"), ("DESC", "DESC")])
+    by = SelectField('By', choices=[("Username", "Username"), ("Email", "Email")])
+
+class AdminViewStaffForm(FlaskForm):
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC", "ASC"), ("DESC", "DESC")])
+    by = SelectField('By', choices=[("Username", "Username"), ("Email", "Email")])
 
 
 class SearchExhibitsHistoryForm(FlaskForm):
     name = StringField('Name')
     visit_num_min = StringField('Min')
     visit_num_max = StringField('Max')
-    date = DateField('Time', format ='%m/%d/%Y')
+    date = DateField('Time', format ='%Y-%m-%d %H:%M:%S')
     search = SubmitField('Search')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Exhibitname", "Name"), ("Datetime", "Time"), ("c", "Number of Visits")])
 
 
 class SearchAnimalForm(FlaskForm):
@@ -77,6 +96,10 @@ class SearchAnimalForm(FlaskForm):
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
     type = SelectField('Type', choices=type_choices)
     search = SubmitField('Search')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Name", "Name"), ("Species", "Species"), ("Age", "Age"),
+                                    ("Place", "Exhibit"),("Type", "Type")])
 
 
 class AdminSearchAnimalForm(FlaskForm):
@@ -88,6 +111,10 @@ class AdminSearchAnimalForm(FlaskForm):
     type = SelectField('Type', choices=type_choices)
     search = SubmitField('Search')
     remove = SubmitField('Remove')
+    sort = SubmitField('OrderBy')
+    by = SelectField('By', choices=[("Name", "Name"), ("Species", "Species"), ("Age", "Age"),
+                                    ("Exhibit", "Exhibit"), ("Type", "Type")])
+
 
 
 class AddAnimalForm(FlaskForm):
@@ -99,10 +126,10 @@ class AddAnimalForm(FlaskForm):
     submit = SubmitField('Add animal')
 
 
+
+
 class RemoveForm(FlaskForm):
     remove = SubmitField('Remove')
-
-
 
 
 class AddShowForm(FlaskForm):
@@ -112,8 +139,12 @@ class AddShowForm(FlaskForm):
     date = DateTimeField('Datetime', format='%Y-%m-%d %H:%M:%S')
     submit = SubmitField('Add Show')
     staff = SelectField('Staff', choices = [])
-    # def __init__(self, staff):
-    #     pass
+
+
+class StaffSearchShowsForm(FlaskForm):
+   sort = SubmitField('OrderBy')
+   direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+   by = SelectField('By', choices=[("Name", "Name"), ("DateAndTime", "Date")])
 
 
 class SearchShowsForm(FlaskForm):
@@ -122,21 +153,32 @@ class SearchShowsForm(FlaskForm):
     date = DateTimeField('Date', format='%Y-%m-%d %H:%M:%S')
     search = SubmitField('Search')
     log_visit = SubmitField('Log Visit')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Name", "Name"), ("LocateAt", "Exhibit"), ("DateAndTime", "Time")])
 
 
 class AdminRemoveShowsForm(FlaskForm):
     name = StringField('Name')
     exhibit = SelectField('Exhibit', choices=exhibit_choices)
-    date = DateField('Date', format='%m/%d/%Y')
+    date = DateField('Date', format='%Y-%m-%d %H:%M:%S')
     remove = SubmitField('Remove Show')
     search = SubmitField('Search Show')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC", "ASC"), ("DESC", "DESC")])
+    by = SelectField('By', choices=[("Name", "Name"), ("DateAndTime", "DateAndTime"), ("LocateAt", "Exhibit")])
 
 
 class ExhibitDetail(FlaskForm):
     name = StringField('Name')
     size = StringField('Size')
+    submit = SubmitField('Log Visit')
     num_animals = StringField('Num Animals')
     water_feature = StringField('Water Feature')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC", "ASC"), ("DESC", "DESC")])
+    by = SelectField('By', choices=[("Name", "Name"), ("Species", "Species")])
+        #, ("Age", "Age"),("Place", "Exhibit"), ("Type", "Type")])
 
 
 class AnimalDetail(FlaskForm):
@@ -148,6 +190,7 @@ class AnimalDetail(FlaskForm):
 
 
 class AnimalCareForm(FlaskForm):
+    Hostby=StringField('Hostby')
     name = StringField('Name')
     species = StringField('Species')
     age = StringField('Age')
@@ -155,4 +198,7 @@ class AnimalCareForm(FlaskForm):
     type = StringField('Type')
     notes = StringField('Notes')
     log_notes = SubmitField('Log Notes')
+    sort = SubmitField('OrderBy')
+    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
+    by = SelectField('By', choices=[("Username", "Staff"),("Texts", "notes"), ("Times", "Date")])
 

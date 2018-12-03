@@ -99,27 +99,45 @@ th
 </div>
 
 <div id="nav">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
 <form action="" method="POST">
   {{form.name.label}}
   <div class="input" type="text" id="txt">
     {{form.name}}
   </div>
   {{form.date.label}}
-  <div class="input" type="datetime-local" value="2015-09-24T13:59:59">
+  <div class="input" type="text">
     {{form.date}}
   </div>
   {{form.exhibit.label}}
-  <div class="select">
-    {{form.exhibit}}
-  </div>
-  <div class = "input">
-       {{ form.search }}
-     </div>
-    {{table}}
-    <div class = "input">
-       {{ form.remove }}
-     </div>
+    <div class="select">
+            {{ form.exhibit }}
+        </div>
+    <div class="select">
+            {{ form.type }}
+        </div>
+        <div class="input">
+            {{ form.sort }}
+        </div>
+        <div class="select">
+            {{ form.by }}
+        </div>
+        <div class="select">
+            {{ form.direction }}
+        </div>
+        <div class="input">
+            {{ form.search }}
+        </div>
 </form>
+    {{ table }}
     <a href="{{url_for('admin')}}"><button type="button">Back</button></a>
 
 
