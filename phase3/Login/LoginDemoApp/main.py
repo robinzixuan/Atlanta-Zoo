@@ -213,55 +213,27 @@ def visitor_search_exhibit():
                 "visitor_search_exhibit_animal_min") else None
             animal_max = request.cookies.get("visitor_search_exhibit_animal_max") if request.cookies.get(
                 "visitor_search_exhibit_animal_max") else None
-            water_feature = 1 if form.water_feature.data else 0
-            query = [
-                'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' %
-                (water_feature)]
+            water_feature = request.cookies.get("visitor_search_exhibit_water") if request.cookies.get(
+                "visitor_search_exhibit_water") else None
+            query = ['select E.Name, E.WaterFeature, E.Size, C.c from Exhibit as E, animal_count as C where E.Name = C.Exhibit AND E.Waterfeature = "%s"' % water_feature]
             if name:
-                if size_min and size_max:
-                    if animal_min and animal_max:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
-                                water_feature, name, size_min, size_max, animal_min, animal_max)]
-                    else:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (
-                                water_feature, name, size_min, size_max)]
-                else:
-                    if animal_min and animal_max:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
-                                water_feature, name, animal_min, animal_max)]
-                    else:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name' % (
-                                water_feature, name)]
-            else:
-                if size_min and size_max:
-                    if animal_min and animal_max:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
-                                water_feature, size_min, size_max, animal_min, animal_max)]
-                    else:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (
-                                water_feature, size_min, size_max)]
-                else:
-                    if animal_min and animal_max:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
-                                water_feature, animal_min, animal_max)]
-                    else:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' % water_feature]
-            query = query[0]
+                query.append(' AND E.Name = "%s"' % name)
+            if size_min:
+                query.append(' AND E.Size >= "%s"' % size_min)
+            if size_max:
+                query.append(' AND E.Size <= "%s"' % size_max)
+            if animal_max:
+                query.append(' AND C.c <= "%s"' % animal_max)
+            if animal_min:
+                query.append(' AND C.c >= "%s"' % animal_min)
+            query = "".join(query)
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
             cur = db.get_db().cursor()
             print("tag1", query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitsTable(
-                [Exhibit(name, size, num_animals, ("YES" if int(water) else "NO")) for name, size, num_animals, water in
+                [Exhibit(name, size, num_animals, ("YES" if int(water) else "NO")) for name, water, size, num_animals in
                  fetch])
             res = make_response(render_template('visitor_search_exhibit.html', form=form, table=table))
             return res
@@ -271,55 +243,27 @@ def visitor_search_exhibit():
             size_max = form.size_max.data
             animal_min = form.animal_min.data
             animal_max = form.animal_max.data
-            water_feature = 1 if form.water_feature.data else 0
+            water_feature = "1" if form.water_feature.data else "0"
             query = [
-                'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' %
-                (water_feature)]
+                'select E.Name, E.WaterFeature, E.Size, C.c from Exhibit as E, animal_count as C where E.Name = C.Exhibit AND E.Waterfeature = "%s"' % water_feature]
             if name:
-                if size_min and size_max:
-                    if animal_min and animal_max:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
-                                water_feature, name, size_min, size_max, animal_min, animal_max)]
-                    else:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (
-                                water_feature, name, size_min, size_max)]
-                else:
-                    if animal_min and animal_max:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
-                                water_feature, name, animal_min, animal_max)]
-                    else:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Name = "%s" GROUP BY Animal.Place = Exhibit.Name' % (
-                                water_feature, name)]
-            else:
-                if size_min and size_max:
-                    if animal_min and animal_max:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
-                                water_feature, size_min, size_max, animal_min, animal_max)]
-                    else:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" AND Exhibit.Size >= "%s" AND Exhibit.Size <= "%s" GROUP BY Animal.Place = Exhibit.Name' % (
-                                water_feature, size_min, size_max)]
-                else:
-                    if animal_min and animal_max:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name HAVING COUNT(*) >= "%s" AND COUNT(*) <= "%s"' % (
-                                water_feature, animal_min, animal_max)]
-                    else:
-                        query = [
-                            'SELECT Exhibit.Name, Exhibit.Size, COUNT(*) as count, Exhibit.WaterFeature FROM Exhibit, Animal WHERE Exhibit.WaterFeature = "%s" GROUP BY Animal.Place = Exhibit.Name' % water_feature]
-            query = query[0]
-            query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
+                query.append(' AND E.Name = "%s"' % name)
+            if size_min:
+                query.append(' AND E.Size >= "%s"' % size_min)
+            if size_max:
+                query.append(' AND E.Size <= "%s"' % size_max)
+            if animal_max:
+                query.append(' AND C.c <= "%s"' % animal_max)
+            if animal_min:
+                query.append(' AND C.c >= "%s"' % animal_min)
+            query = "".join(query)
             cur = db.get_db().cursor()
             print("tag2", query)
             cur.execute(query)
             fetch = cur.fetchall()
+            print(fetch)
             table = ExhibitsTable(
-                [Exhibit(name, size, num_animals, ("YES" if int(water) else "NO")) for name, size, num_animals, water in
+                [Exhibit(name, size, num_animals, ("YES" if int(water) else "NO")) for name, water, size, num_animals in
                  fetch])
             res = make_response(render_template('visitor_search_exhibit.html', form=form, table=table))
             res.set_cookie("visitor_search_exhibit_name", name)
@@ -327,6 +271,7 @@ def visitor_search_exhibit():
             res.set_cookie("visitor_search_exhibit_size_max", size_max)
             res.set_cookie("visitor_search_exhibit_animal_min", animal_min)
             res.set_cookie("visitor_search_exhibit_animal_max", animal_max)
+            res.set_cookie("visitor_search_exhibit_water", water_feature)
             return res
     return render_template("visitor_search_exhibit.html", form=form)
 
