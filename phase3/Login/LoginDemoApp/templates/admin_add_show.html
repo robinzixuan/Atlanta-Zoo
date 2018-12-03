@@ -164,6 +164,15 @@ app.controller('orderByCtrl', function($scope) {
 </div>
 
 <div id="nav">
+{% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
 <form action="" method="POST">
     {{ form.hidden_tag() }}
 
@@ -198,7 +207,7 @@ app.controller('orderByCtrl', function($scope) {
                 {% endif %}
             </div>
   {{form.date.label}}
-  <div class="input" type="datetime-local" value="2015-09-24T13:59:59">
+  <div class="input" type="text">
     {{form.date}}
   </div>
 

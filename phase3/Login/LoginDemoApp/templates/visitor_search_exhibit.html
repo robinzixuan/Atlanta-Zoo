@@ -208,6 +208,15 @@
 </div>
 
 <div id="nav">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
     <form action="" method="POST">
 
         {{ form.name.label }}

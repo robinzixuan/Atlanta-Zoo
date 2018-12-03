@@ -55,7 +55,7 @@ class AnimalTable(Table):
 class Show1:
     def __init__(self, name, time, exhibit):
         self.name = name
-        self.time = time
+        self.time = str(time)
         self.exhibit = exhibit
 
 
@@ -64,6 +64,7 @@ class ShowsTable1(Table):
     time = Col('Time')
     exhibit = Col('Exhibit')
     choose = LinkCol('SeeExhibit', 'exhibit_detail', url_kwargs=dict(id='exhibit'))
+    log=ButtonCol('Log','visitor_visit_show', url_kwargs=dict(id='exhibit', id1='name', id2='time'))
 
 
 class ExhibitHistoryTable(Table):
@@ -143,7 +144,7 @@ class ShowsTable(Table):
 #     cur.execute(' Delete FROM Shows where Name=%s and DataAndTime=%s', id.name, id.time)
 
 
-class Animaldelete:
+class AnimalDelete:
     def __init__(self, name, species, exhibit, age, type):
         self.name = name
         self.species = species
@@ -151,7 +152,7 @@ class Animaldelete:
         self.age = age
         self.type = type
 
-class AnimalTabledelete(Table):
+class AnimalTableDelete(Table):
     name = Col('Name')
     species = Col('Species')
     exhibit = Col('Exhibit')

@@ -6,6 +6,8 @@ from pymysql.err import IntegrityError
 from LoginDemoApp.table import *
 import hashlib
 import datetime
+import tkinter
+import tkinter.messagebox
 
 
 @app.route("/")
@@ -161,13 +163,14 @@ def exhibit_detail(id):
     cur.execute('SELECT * FROM Exhibit WHERE Name = "%s"' % id)
     fetch = cur.fetchone()
     name, is_water, size = fetch
-    # todo: merge into one sql query
     form.name.data = name
     form.size.data = size
     form.water_feature.data = "YES" if int(is_water) else "NO"
     if form.is_submitted():
-        cur.execute('SELECT * FROM Animal WHERE Place = "%s" ORDER BY %s %s' % (id, form.by.data, form.direction.data))
-        animals = cur.fetchall()
+        time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # print('Insert INTO VisitExhibit VALUES (%s, %s, %s)' % (current_user.username, name, time))
+        cur.execute('Insert INTO VisitExhibit VALUES (%s, %s, %s)', (current_user.username, name, time))
+        return redirect(url_for('visitor_search_exhibit'))
     else:
         cur.execute('SELECT * FROM Animal WHERE Place = "%s"' % id)
         animals = cur.fetchall()
@@ -175,7 +178,6 @@ def exhibit_detail(id):
     form.num_animals.data = num_animals
     # print(animals)
     table = ExhibitsTable1([Exhibit1(name, sp) for name, sp, _, _, _ in animals])
-
     return render_template("exhibit_detail.html", form=form, table=table)
 
 
@@ -417,31 +419,31 @@ def visitor_search_show():
 @app.route("/visitor_exhibit_history", methods=['GET', 'POST'])
 def visitor_exhibit_history():
     form = SearchExhibitsHistoryForm()
+    cur = db.get_db().cursor()
     if form.is_submitted():
         if form.sort.data:
-            name = request.cookies.get("visitor_exhibit_history_name") if request.cookies.get(
-                "visitor_exhibit_history_name") else None
-            date = request.cookies.get("visitor_exhibit_history_date") if request.cookies.get(
-                "visitor_exhibit_history_date") else None
-            visit_num_max = request.cookies.get("visitor_exhibit_history_visit_num_max") if request.cookies.get(
-                "visitor_exhibit_history_visit_num_max") else None
-            visit_num_min = request.cookies.get("visitor_exhibit_history_visit_num_min") if request.cookies.get(
-                "visitor_exhibit_history_visit_num_min") else None
-            query = [
-                'SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname' % date]
+            name = request.cookies.get("visitor_exhibit_history_name") if request.cookies.get("visitor_exhibit_history_name") else form.name.data
+            date = request.cookies.get("visitor_exhibit_history_date") if request.cookies.get("visitor_exhibit_history_date") else form.date.data
+            visit_num_max = request.cookies.get("visitor_exhibit_history_visit_num_max") if request.cookies.get("visitor_exhibit_history_visit_num_max") else form.visit_num_max.data
+            visit_num_min = request.cookies.get("visitor_exhibit_history_visit_num_min") if request.cookies.get("visitor_exhibit_history_visit_num_min") else form.visit_num_min.data
+            # name = form.name.data
+            # date = form.date.data
+            # visit_num_max = form.visit_num_max.data
+            # visit_num_min = form.visit_num_min.data
+            # # cur.execute('create view exhibit_count as select Username, Exhibitname, Datetime, count(Exhibitname) as c from VisitExhibit group by Exhibitname, Username;')
+            query = 'select V.Exhibitname, V.Datetime, C.c from VisitExhibit as V, exhibit_count as C where C.Username = V.Username and C.Exhibitname = V.Exhibitname and V.Username = "%s"' % (current_user.username)
             if name:
-                if visit_num_min and visit_num_max:
-                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" AND Name = "%s" GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (date, name, visit_num_max, visit_num_min)]
-                else:
-                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" AND Name = "%s" GROUP BY Exhibitname' % (date, name)]
-            else:
-                if visit_num_min and visit_num_max:
-                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (date, visit_num_max, visit_num_min)]
-                else:
-                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname' % date]
-            query = query[0]
+                query += ' AND V.Exhibitname = "%s"' % name
+            if date:
+                query += ' AND V.Datetime = "%s"' % date
+            if visit_num_min:
+                query += ' AND C.c >= "%s"' % visit_num_min
+            if visit_num_max:
+                query += ' AND C.c <= "%s"' % visit_num_max
+            print(query)
+            ''
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
-            cur = db.get_db().cursor()
+            print(query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitHistoryTable(
@@ -450,36 +452,41 @@ def visitor_exhibit_history():
             return res
         elif form.search.data:
             name = form.name.data
-            date = date = form.date.data
+            date = form.date.data
             visit_num_max = form.visit_num_max.data
             visit_num_min = form.visit_num_min.data
-            query = [
-                'SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname' % date]
+            query = 'select V.Exhibitname, V.Datetime, C.c from VisitExhibit as V, exhibit_count as C where C.Username = V.Username and C.Exhibitname = V.Exhibitname and V.Username = "%s"' % (
+                current_user.username)
             if name:
-                if visit_num_min and visit_num_max:
-                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" AND Name = "%s" GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (date, name, visit_num_max, visit_num_min)]
-                else:
-                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" AND Name = "%s" GROUP BY Exhibitname' % (date, name)]
-            else:
-                if visit_num_min and visit_num_max:
-                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname HAVING COUNT(*) <= "%s" AND COUNT(*) >= "%s"' % (date, visit_num_max, visit_num_min)]
-                else:
-                    query = ['SELECT VisitExhibit.Exhibitname, VisitExhibit.Datetime, COUNT(*) as count FROM VisitExhibit WHERE Datetime = "%s" GROUP BY Exhibitname' % date]
-            query = query[0]
-            cur = db.get_db().cursor()
+                query += ' AND V.Exhibitname = "%s"' % name
+            if date:
+                query += ' AND V.Datetime = "%s"' % date
+            if visit_num_min:
+                query += ' AND C.c >= "%s"' % visit_num_min
+            if visit_num_max:
+                query += ' AND C.c <= "%s"' % visit_num_max
+            print(query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ExhibitHistoryTable(
                 [ExhibitHistory(name, time, num_of_visits) for name, time, num_of_visits in fetch])
             res = make_response(render_template('visitor_exhibit_history.html', form=form, table=table))
-            if name != "":
+            if name:
                 res.set_cookie("visitor_exhibit_history_name", name)
+            else:
+                res.set_cookie("visitor_exhibit_history_name", expires = 0)
             if date:
-                res.set_cookie("visitor_exhibit_history_date", date)
-            if visit_num_max != "":
-                res.set_cookie("visitor_exhibit_history_visit_num_min", visit_num_min)
-            if visit_num_min != "":
-                res.set_cookie("visitor_exhibit_history_visit_num_max", visit_num_max)
+                res.set_cookie("visitor_exhibit_history_date", str(date))
+            else:
+                res.set_cookie("visitor_exhibit_history_date", expires=0)
+            if visit_num_max:
+                res.set_cookie("visitor_exhibit_history_visit_num_min", visit_num_max)
+            else:
+                res.set_cookie("visitor_exhibit_history_visit_num_min", expires=0)
+            if visit_num_min:
+                res.set_cookie("visitor_exhibit_history_visit_num_max", visit_num_min)
+            else:
+                res.set_cookie("visitor_exhibit_history_visit_num_max", expires=0)
             return res
     return render_template("visitor_exhibit_history.html", form=form)
 
@@ -496,14 +503,15 @@ def visitor_show_history():
                 "visitor_show_history_time") else None
             exhibit = request.cookies.get("visitor_show_history_exhibit")
             query = [
-                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE VisitShow.Showname = "%s"' % name]
+                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE Shows.Name = VisitShow.Showname AND VisitShow.Showdate = Shows.DateAndTime AND Shows.LocateAt = "%s" AND Username = "%s"' % (exhibit, current_user.username)]
             if time:
-                query.append('VisitShow.Showname = Shows.Name')
-            if exhibit:
-                query.append('Shows.LocateAt = "%s"' % exhibit)
+                query.append('VisitShow.Showdate = "%s"' % time)
+            if name:
+                query.append('VisitShow.Showname = "%s"' % name)
             query = " AND ".join(query)
             query += " ORDER BY %s %s" % (form.by.data, form.direction.data)
             cur = db.get_db().cursor()
+            print(query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ShowHistoryTable([ShowHistory(name, time, exhibit) for name, time, exhibit in fetch])
@@ -514,13 +522,15 @@ def visitor_show_history():
             time = form.date.data
             exhibit = form.exhibit.data
             query = [
-                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE VisitShow.Showname = "%s"' % name]
+                'SELECT VisitShow.Showname, VisitShow.Showdate, Shows.LocateAt FROM VisitShow, Shows WHERE Shows.Name = VisitShow.Showname AND VisitShow.Showdate = Shows.DateAndTime AND Shows.LocateAt = "%s" AND Username = "%s"' % (exhibit, current_user.username)]
             if time:
-                query.append('VisitShow.Showname = Shows.Name')
-            if exhibit:
-                query.append('Shows.LocateAt = "%s"' % exhibit)
+                query.append('VisitShow.Showdate = "%s"' % time)
+            if name:
+                query.append('VisitShow.Showname = "%s"' % name)
+                #
             query = " AND ".join(query)
             cur = db.get_db().cursor()
+            print(query)
             cur.execute(query)
             fetch = cur.fetchall()
             table = ShowHistoryTable([ShowHistory(name, time, exhibit) for name, time, exhibit in fetch])
@@ -528,7 +538,8 @@ def visitor_show_history():
             if name != "":
                 res.set_cookie("visitor_show_history_name", name)
             if time:
-                res.set_cookie("visitor_show_history_date", time)
+                # print(type(time))
+                res.set_cookie("visitor_show_history_date", str(time))
             res.set_cookie("visitor_show_history_exhibit", exhibit)
             return res
     return render_template("visitor_show_history.html", form=form)
@@ -591,7 +602,8 @@ def staff_search_animal():
             if age_max:
                 query.append('Age <= "%s"' % age_max)
             query = " AND ".join(query)
-            query += " ORDER BY %s %s " % (by, direction)
+            query += " ORDER BY %s %s" % (by, direction)
+            print(query)
             cur = db.get_db().cursor()
             cur.execute(query)
             fetch = cur.fetchall()
@@ -763,19 +775,13 @@ def admin_view_show():
 @app.route("/admin_view_animal", methods=['GET', 'POST'])
 def admin_view_animal():
     form = SearchAnimalForm()
-    table = AnimalTable([])
+    name = request.cookies.get("admin_view_animal_name") if request.cookies.get( "admin_view_animal_name") else None
+    species = request.cookies.get("admin_view_animal_species") if request.cookies.get("admin_view_animal_species") else None
+    age_min = request.cookies.get("admin_view_animal_age_min") if request.cookies.get("admin_view_animal_age_min") else None
+    age_max = request.cookies.get("admin_view_animal_age_max") if request.cookies.get("admin_view_animal_age_max") else None
     if form.is_submitted():
         print(form.search.data)
         if form.sort.data:
-            name = request.cookies.get("admin_view_animal_name") if request.cookies.get(
-                "admin_view_animal_name") else None
-            species = request.cookies.get("admin_view_animal_species") if request.cookies.get(
-                "admin_view_animal_species") else None
-
-            age_min = request.cookies.get("admin_view_animal_age_min") if request.cookies.get(
-                "admin_view_animal_age_min") else None
-            age_max = request.cookies.get("admin_view_animal_age_max") if request.cookies.get(
-                "admin_view_animal_age_max") else None
             exhibit = form.exhibit.data
             type = form.type.data
             query = ['SELECT * FROM Animal WHERE Type = "%s" AND Place = "%s"' % (type, exhibit)]
@@ -793,7 +799,7 @@ def admin_view_animal():
             cur = db.get_db().cursor()
             cur.execute(query)
             fetch = cur.fetchall()
-            table = AnimalTable([Animal(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
+            table = AnimalTableDelete([AnimalDelete(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
             res = make_response(render_template('admin_view_animal.html', form=form, table=table))
             return res
         elif form.search.data:
@@ -816,14 +822,14 @@ def admin_view_animal():
             cur = db.get_db().cursor()
             cur.execute(query)
             fetch = cur.fetchall()
-            table = AnimalTable([Animal(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
+            table = AnimalTableDelete([AnimalDelete(name, sp, ex, age, t) for name, sp, t, age, ex in fetch])
             res = make_response(render_template('admin_view_animal.html', form=form, table=table))
             res.set_cookie("admin_view_animal_name", name)
             res.set_cookie("admin_view_animal_species", species)
             res.set_cookie("admin_view_animal_age_min", age_min)
             res.set_cookie("admin_view_animal_age_max", age_max)
-            res.set_cookie("admin_view_animal_exhibit", exhibit)
-            res.set_cookie("admin_view_animal_type", type)
+            # res.set_cookie("admin_view_animal_exhibit", exhibit)
+            # res.set_cookie("admin_view_animal_type", type)
             return res
     return render_template("admin_view_animal.html", form=form)
 
@@ -901,3 +907,27 @@ def staffdelete(id):
     cur.execute('Delete FROM Staff where Username=%s', id)
     cur.execute('Delete FROM User where Username=%s', id)
     return redirect(url_for('admin_view_staff'))
+
+@login_required
+@app.route("/visitor_visit_show/<string:id>/<string:id1>/<string:id2>", methods=['GET', 'POST'])
+def visitor_visit_show(id, id1, id2):
+    curr_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # show_time = datetime.
+    cur = db.get_db().cursor()
+    print(id2, type(id2))
+    if id2 <= curr_time:
+        try:
+            cur.execute('INSERT INTO VisitShow (Username, Showname, Showdate) VALUES (%s, %s, %s)',(current_user.username, id1, id2))
+            cur.execute('INSERT INTO VisitExhibit (Username, Exhibitname, Datetime) VALUES (%s, %s, %s)', (current_user.username, id, id2))
+            flash("Log successful")
+            print("log successful")
+        except IntegrityError as e:
+            flash("Failed!\n" + str(e.args[1]))
+    else:
+        # tkinter.messagebox.showwarning('Warning','Failed to log a visit!')
+        flash("Failed to log show. Too early!")
+        print("Failed to log show")
+    return redirect(url_for("visitor_search_show"))
+
+def visitor_visit_exhbit():
+    pass

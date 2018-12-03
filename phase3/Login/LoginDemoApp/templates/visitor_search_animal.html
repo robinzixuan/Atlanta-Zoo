@@ -172,6 +172,15 @@
 </div>
 
 <div id="nav">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
     <form action="" method="POST">
         {{ form.name.label }}
         <div class="input">
@@ -188,10 +197,10 @@
         Age:
         {{ form.age_max.label }}
         <input type="button" onclick="add()" value="+">
-        <input type="text" name="age_max" id="txt" value="10">
+        <input type="text" name="age_max" id="txt">
         <input type="button" onclick="sub()" value="-"></td><br>
         {{ form.age_min.label }} <input type="button" onclick="add2()" value="+">
-        <input type="text" name="age_min" id="txt" value="1">
+        <input type="text" name="age_min" id="txt">
         <input type="button" onclick="sub2()" value="-"></td><br>
         {{ form.type.label }}
         <div class="select">

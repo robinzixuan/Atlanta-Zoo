@@ -99,6 +99,15 @@ th
 </div>
 
 <div id="nav">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
 <form action="" method="POST">
   {{form.name.label}}: {{form.name.data}} <br>
   {{form.size.label}}: {{form.size.data}}<br>
@@ -115,7 +124,7 @@ th
         </div>
 
   <div class="input">
-    {{form.log_visit}}
+    {{form.submit}}
   </div>
 
 </form>
@@ -123,6 +132,6 @@ th
 {{table}}
 
 </div>
-<a href="{{url_for('visitor')}}"><button type="button">Log Out</button></a>
+<a href="{{url_for('visitor_search_exhibit')}}"><button type="button">Back</button></a>
 </body>
 </html>

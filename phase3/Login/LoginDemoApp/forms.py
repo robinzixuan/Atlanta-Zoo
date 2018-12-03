@@ -7,7 +7,7 @@ from LoginDemoApp import db
 
 from LoginDemoApp.database_tables import load_user
 
-exhibit_choices = [('Pacific', 'Pacific'), ('Jungle', 'Jungle'), ('Sahara', 'Sahara'), ('Mountainous', 'Mountanious')]
+exhibit_choices = [('Pacific', 'Pacific'), ('Jungle', 'Jungle'), ('Sahara', 'Sahara'), ('Mountainous', 'Mountanious'), ("Birds", "Birds")]
 type_choices = [('Mammal', 'Mammal'), ('Fish', 'Fish'), ('Amphibian', 'Amphibian'), ('Bird', 'Bird')]
 #
 # class StaffChoices:
@@ -81,11 +81,11 @@ class SearchExhibitsHistoryForm(FlaskForm):
     name = StringField('Name')
     visit_num_min = StringField('Min')
     visit_num_max = StringField('Max')
-    date = DateField('Time', format ='%m/%d/%Y')
+    date = DateField('Time', format ='%Y-%m-%d %H:%M:%S')
     search = SubmitField('Search')
     sort = SubmitField('OrderBy')
     direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
-    by = SelectField('By', choices=[("Name", "Name"), ("Time", "Time"), ("Number of Visits", "Number of Visits")])
+    by = SelectField('By', choices=[("Exhibitname", "Name"), ("Datetime", "Time"), ("c", "Number of Visits")])
 
 
 class SearchAnimalForm(FlaskForm):
@@ -144,7 +144,7 @@ class AddShowForm(FlaskForm):
 class StaffSearchShowsForm(FlaskForm):
    sort = SubmitField('OrderBy')
    direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
-   by = SelectField('By', choices=[("Name", "Name"), ("Time", "Date")])
+   by = SelectField('By', choices=[("Name", "Name"), ("DateAndTime", "Date")])
 
 
 class SearchShowsForm(FlaskForm):
@@ -155,7 +155,7 @@ class SearchShowsForm(FlaskForm):
     log_visit = SubmitField('Log Visit')
     sort = SubmitField('OrderBy')
     direction = SelectField('Direction', choices=[("ASC","ASC"),("DESC","DESC")])
-    by = SelectField('By', choices=[("Name", "Name"), ("Exhibit", "Exhibit"), ("DateAndTime", "Time")])
+    by = SelectField('By', choices=[("Name", "Name"), ("LocateAt", "Exhibit"), ("DateAndTime", "Time")])
 
 
 class AdminRemoveShowsForm(FlaskForm):
@@ -172,6 +172,7 @@ class AdminRemoveShowsForm(FlaskForm):
 class ExhibitDetail(FlaskForm):
     name = StringField('Name')
     size = StringField('Size')
+    submit = SubmitField('Log Visit')
     num_animals = StringField('Num Animals')
     water_feature = StringField('Water Feature')
     sort = SubmitField('OrderBy')

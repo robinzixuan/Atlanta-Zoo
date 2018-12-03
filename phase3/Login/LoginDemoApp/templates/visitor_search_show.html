@@ -172,6 +172,15 @@
 </div>
 
 <div id="nav">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
     <form action="" method="POST">
         {{ form.name.label }}
         <div class="input">
@@ -182,7 +191,7 @@
             {{ form.exhibit }}
         </div>
         {{ form.date.label }}
-        <div class="input" type="datetime-local" value="2015-09-24T13:59:59">
+        <div class="input" type="text">
             {{ form.date }}
         </div>
         <div class="input">

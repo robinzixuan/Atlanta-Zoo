@@ -170,6 +170,15 @@ app.controller('orderByCtrl', function($scope) {
 </div>
 
 <div id="nav">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{message}}
+                </div>
+            {% endfor%}
+        {% endif %}
+    {% endwith %}
     <form action="" method="POST">
 
         {{ form.name.label }}
@@ -187,12 +196,12 @@ app.controller('orderByCtrl', function($scope) {
         </div>
         Age: <br>
         {{ form.age_max.label }} <input type="button" onclick="add()" value="+">
-        <input name="age_max" id="age_max" value="10">
+        <input name="age_max" id="age_max">
 
         <input type="button" onclick="sub()" value="-"></td><br>
 
         {{ form.age_min.label }} <input type="button" onclick="add2()" value="+">
-        <input name="age_min" id="age_min" value="1">
+        <input name="age_min" id="age_min">
 
         <input type="button" onclick="sub2()" value="-"></td><br>
         {{ form.type.label }}
