@@ -169,10 +169,15 @@ def exhibit_detail(id):
     form.size.data = size
     form.water_feature.data = "YES" if int(is_water) else "NO"
     if form.is_submitted():
-        time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # print('Insert INTO VisitExhibit VALUES (%s, %s, %s)' % (current_user.username, name, time))
-        cur.execute('Insert INTO VisitExhibit VALUES (%s, %s, %s)', (current_user.username, name, time))
-        return redirect(url_for('visitor_search_exhibit'))
+        if form.submit.data:
+            time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # print('Insert INTO VisitExhibit VALUES (%s, %s, %s)' % (current_user.username, name, time))
+            cur.execute('Insert INTO VisitExhibit VALUES (%s, %s, %s)', (current_user.username, name, time))
+            return redirect(url_for('visitor_search_exhibit'))
+        elif form.sort.data:
+            cur.execute('SELECT * FROM Animal WHERE Place = "%s" ORDER BY %s %s' % (id, form.by.data, form.direction.data))
+            animals = cur.fetchall()
+            print('SELECT * FROM Animal WHERE Place = "%s" ORDER BY "%s" "%s"' % (id, form.by.data, form.direction.data))
     else:
         cur.execute('SELECT * FROM Animal WHERE Place = "%s"' % id)
         animals = cur.fetchall()
@@ -407,6 +412,9 @@ def visitor_search_show():
                 "visitor_search_shows_exhibit") else None
             date = request.cookies.get("visitor_search_shows_date") if request.cookies.get(
                 "visitor_search_shows_date") else None
+            form.name.data = name
+            form.exhibit.data = exhibit
+            form.date.data = date
             query = ['SELECT * FROM Shows WHERE LocateAt = "%s"' % exhibit]
             if name:
                 query.append('Name = "%s"' % name)
@@ -442,6 +450,29 @@ def visitor_search_show():
             if date:
                 res.set_cookie("visitor_search_shows_date", date)
             return res
+    if request.cookies.get("visitor_just_log_show"):
+        name = request.cookies.get("visitor_search_shows_name") if request.cookies.get(
+            "visitor_search_shows_name") else None
+        exhibit = request.cookies.get("visitor_search_shows_exhibit") if request.cookies.get(
+            "visitor_search_shows_exhibit") else None
+        date = request.cookies.get("visitor_search_shows_date") if request.cookies.get(
+            "visitor_search_shows_date") else None
+        form.name.data = name
+        form.exhibit.data = exhibit
+        form.date.data = date
+        query = ['SELECT * FROM Shows WHERE LocateAt = "%s"' % exhibit]
+        if name:
+            query.append('Name = "%s"' % name)
+        if date:
+            query.append('DateAndTime = "%s"' % date)
+        query = " AND ".join(query)
+        cur = db.get_db().cursor()
+        cur.execute(query)
+        fetch = cur.fetchall()
+        table = ShowsTable1([Show1(name, str(date), ex) for name, date, ex, _ in fetch])
+        res = make_response(render_template('visitor_search_show.html', form=form, table=table))
+        res.set_cookie("visitor_just_log_show", expires=0)
+        return res
     return render_template("visitor_search_show.html", form=form)
 
 
@@ -1045,8 +1076,7 @@ def visitor_visit_show(id, id1, id2):
         # tkinter.messagebox.showwarning('Warning','Failed to log a visit!')
         flash("Failed to log show. Too early!")
         print("Failed to log show")
-    return redirect(url_for("visitor_search_show"))
 
-
-def visitor_visit_exhbit():
-    pass
+    res = redirect(url_for("visitor_search_show"))
+    res.set_cookie("visitor_just_log_show")
+    return res
